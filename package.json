@@ -1,0 +1,23 @@
+{
+  "name": "mikeholmdev",
+  "version": "1.0.0",
+  "description": "my website",
+  "main": "index.js",
+  "scripts": {
+    "start": "for i in {8000..9000}; do lsof -i tcp:${i}; if [ 0 -ne \"$?\" ]; then reload -b -p ${i}; break; fi; done",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coldpour/mikeholmdev.git"
+  },
+  "author": "Mike Holm <coldpour@gmail.com>",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/coldpour/mikeholmdev/issues"
+  },
+  "homepage": "mikeholmdev.com",
+  "devDependencies": {
+    "reload": "^3.0.1"
+  }
+}
