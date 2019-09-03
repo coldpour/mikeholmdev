@@ -4,7 +4,12 @@
   "description": "my website",
   "main": "index.js",
   "scripts": {
-    "start": "for i in {8000..9000}; do lsof -i tcp:${i}; if [ 0 -ne \"$?\" ]; then reload -b -p ${i}; break; fi; done",
+    "build:html": "node index.js",
+    "build:css": "dart-sass src:dist",
+    "build": "rm -rf dist && yarn build:html && yarn build:css",
+    "watch": "nodemon index.js & dart-sass src:dist --watch",
+    "serve:dev": "for i in {8000..9000}; do lsof -i tcp:${i}; if [ 0 -ne \"$?\" ]; then reload -b -p ${i} -d dist; break; fi; done",
+    "start": "yarn watch & yarn serve:dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +23,9 @@
   },
   "homepage": "mikeholmdev.com",
   "devDependencies": {
-    "reload": "^3.0.1"
+    "dart-sass": "^1.22.10",
+    "jshtml": "https://github.com/coldpour/jshtml.git",
+    "reload": "^3.0.1",
+    "nodemon": "^1.19.1"
   }
 }

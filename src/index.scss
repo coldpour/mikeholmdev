@@ -1,0 +1,82 @@
+$spacing-xs: .125em;
+$spacing-m: 1em;
+
+body {
+  font-family: Georgia, Times, serif;
+
+  @media print {
+    font-size: .5em;
+  }
+}
+
+h1, h2, h3, h4, h5, p {
+  margin: 0;
+}
+
+header {
+  h1 {
+    font-size: 2.5em;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+h2 {
+  font-size: .8em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+h3 {
+  font-weight: normal;
+}
+
+.experience {
+  margin: 1.5 * $spacing-m 0;
+}
+
+$font-size-subhead: .8em;
+.job {
+  margin: $spacing-m 0;
+
+
+  .company {
+    font-weight: bold;
+  }
+
+  .title {
+    font-style: italic;
+
+    &:before {
+      content: ' — '
+    }
+  }
+
+  .location {
+    font-size: $font-size-subhead;
+    display: none;
+  }
+
+  .tenure {
+    color: #666;
+    font-size: $font-size-subhead;
+  }
+
+  .end {
+    &:before {
+      content: ' - '
+    }
+  }
+
+  .tools {
+    font-size: $font-size-subhead;
+    margin: $spacing-xs 0 0 0;
+  }
+
+  .description {
+    margin-top: $spacing-m;
+  }
+}
+
