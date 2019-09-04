@@ -10,7 +10,8 @@
     "watch": "nodemon index.js & dart-sass src:dist --watch",
     "serve:dev": "for i in {8000..9000}; do lsof -i tcp:${i}; if [ 0 -ne \"$?\" ]; then reload -b -p ${i} -d dist; break; fi; done",
     "start": "yarn watch & yarn serve:dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "standard",
+    "test": "yarn lint"
   },
   "repository": {
     "type": "git",
@@ -24,8 +25,23 @@
   "homepage": "mikeholmdev.com",
   "devDependencies": {
     "dart-sass": "^1.22.10",
+    "husky": "^3.0.5",
     "jshtml": "https://github.com/coldpour/jshtml.git",
+    "lint-staged": "^9.2.5",
+    "nodemon": "^1.19.1",
+    "prettier-standard": "^14.0.3",
     "reload": "^3.0.1",
-    "nodemon": "^1.19.1"
+    "standard": "^14.1.0"
+  },
+  "lint-staged": {
+    "**/*.{js,scss}": [
+      "prettier-standard --lint",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
