@@ -1,15 +1,22 @@
-$spacing-xs: .125em;
+$spacing-xs: 0.125em;
 $spacing-m: 1em;
+$font-family-serif: Georgia, Times, serif;
+$font-family-sans: Arial, sans-serif;
 
 body {
-  font-family: Georgia, Times, serif;
+  font-family: $font-family-serif;
 
   @media print {
-    font-size: .5em;
+    font-size: 0.5em;
   }
 }
 
-h1, h2, h3, h4, h5, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
   margin: 0;
 }
 
@@ -30,9 +37,10 @@ header {
 }
 
 h2 {
-  font-size: .8em;
+  font-size: 0.8em;
   text-transform: uppercase;
-  color: #888;
+  color: #999;
+  font-family: $font-family-sans;
 }
 
 h3 {
@@ -47,7 +55,8 @@ h3 {
   }
 }
 
-$font-size-subhead: .8em;
+$font-size-subhead: 0.8em;
+.school,
 .job {
   margin: $spacing-m 0;
 
@@ -55,15 +64,17 @@ $font-size-subhead: .8em;
     margin: 2vw 0;
   }
 
+  .school,
   .company {
     font-weight: bold;
   }
 
+  .degree,
   .title {
     font-style: italic;
 
     &:before {
-      content: ' — '
+      content: ' — ';
     }
   }
 
@@ -73,13 +84,14 @@ $font-size-subhead: .8em;
   }
 
   .tenure {
-    color: #666;
+    color: #888;
     font-size: $font-size-subhead;
+    font-family: $font-family-sans;
   }
 
   .end {
     &:before {
-      content: ' - '
+      content: ' - ';
     }
   }
 
@@ -92,4 +104,3 @@ $font-size-subhead: .8em;
     margin-top: $spacing-m;
   }
 }
-
