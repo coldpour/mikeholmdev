@@ -1,5 +1,5 @@
-$spacing-xs: 0.125em;
-$spacing-m: 1em;
+$spacing-xs: 0.25em;
+$spacing-m: 1.5em;
 $font-family-serif: Georgia, Times, serif;
 $font-family-sans: Arial, sans-serif;
 
@@ -20,19 +20,67 @@ p {
   margin: 0;
 }
 
+a {
+  @media print {
+    color: black;
+    text-decoration: none;
+    font-style: normal;
+    font-weight: bold;
+  }
+}
+
 main {
   max-width: 600px;
   margin: auto;
 }
 
 header {
+  @media print {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  margin-top: 4vw;
+
   h1 {
     font-size: 2.5em;
-    margin-top: 4vw;
   }
 
   p {
     margin: 0;
+  }
+
+  address {
+    font-size: 0.8em;
+
+    ul {
+      display: flex;
+      list-style: none;
+      margin: $spacing-xs 0 0 0;
+      padding: 0;
+
+      @media print {
+        display: block;
+      }
+    }
+
+    li:not(:last-of-type) {
+      margin-right: 0.5em;
+    }
+
+    li {
+      @media print {
+        margin: $spacing-xs 0 0 0;
+      }
+    }
+
+    .printOnly {
+      display: none;
+
+      @media print {
+        display: block;
+      }
+    }
   }
 }
 
@@ -84,9 +132,11 @@ $font-size-subhead: 0.8em;
   }
 
   .tenure {
+    display: block;
     color: #888;
     font-size: $font-size-subhead;
     font-family: $font-family-sans;
+    margin-top: $spacing-xs;
   }
 
   .end {

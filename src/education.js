@@ -41,5 +41,8 @@ module.exports = () =>
   H.section(
     { class: 'education' },
     H.h2('Education'),
-    education.map(school).join('')
+    education
+      .slice(0, 1)
+      .map(school)
+      .join('')
   )
