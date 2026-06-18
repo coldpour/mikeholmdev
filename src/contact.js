@@ -6,6 +6,7 @@ const printOnly = children => H.li({ class: 'printOnly' }, children)
 
 module.exports = () =>
   H.address(
+    { id: 'contact' },
     H.ul(
       printOnly('3077 Fulton Cir'),
       printOnly('Boulder, CO 80301'),
