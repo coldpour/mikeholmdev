@@ -219,21 +219,6 @@ const currentWork = () =>
       { class: 'section-heading' },
       H.p({ class: 'eyebrow' }, 'Current work'),
       H.h2('Percipient.ai')
-    ),
-    H.div(
-      { class: 'role-layout' },
-      H.p(
-        { class: 'role-meta' },
-        'Principal UI Engineer, Tech Lead, 2020-present'
-      ),
-      H.div(
-        H.p(
-          'Percipient.ai builds Mirage, an intelligence analysis platform for national security missions. My portfolio should handle this work differently from a resume: some details need to stay high-level, but the product context and engineering shape still matter.'
-        ),
-        H.p(
-          'This section is intentionally framed as a placeholder for deeper, approved writeups about complex product work, AI-assisted workflows, data-heavy interfaces, and engineering decisions made under real operational constraints.'
-        )
-      )
     )
   )
 
@@ -245,7 +230,7 @@ const identityUploadWorkflow = () =>
     { class: 'case-study percipient-case-study', id: 'identity-image-upload' },
     H.div(
       { class: 'section-heading' },
-      H.p({ class: 'eyebrow' }, 'Percipient deep dive sketch'),
+      H.p({ class: 'eyebrow' }, 'Percipient deep dive'),
       H.h2('Bulk image upload for identity creation')
     ),
     H.div(
@@ -354,7 +339,7 @@ const resultsMapWorkflow = () =>
     { class: 'case-study percipient-case-study', id: 'results-map' },
     H.div(
       { class: 'section-heading' },
-      H.p({ class: 'eyebrow' }, 'Percipient deep dive sketch'),
+      H.p({ class: 'eyebrow' }, 'Percipient deep dive'),
       H.h2('Maps for search result exploration')
     ),
     H.div(
@@ -442,7 +427,7 @@ const libraryScalability = () =>
     { class: 'case-study percipient-case-study', id: 'library-scalability' },
     H.div(
       { class: 'section-heading' },
-      H.p({ class: 'eyebrow' }, 'Percipient deep dive sketch'),
+      H.p({ class: 'eyebrow' }, 'Percipient deep dive'),
       H.h2('Refactoring the library for scale and navigation')
     ),
     H.div(
