@@ -54,6 +54,7 @@ src/
     page.tsx
     projects/
       [slug]/
+        Demo.tsx
         page.tsx
   components/
     CaseStudy.tsx
@@ -66,11 +67,6 @@ src/
   content/
     projects.ts
     experience.ts
-  project-demos/
-    SvgAnimationDemo.tsx
-    ResultsMapDemo.tsx
-    IdentityUploadDemo.tsx
-    BuildVsBuyDemo.tsx
   theme/
     components.ts
     theme.ts
@@ -169,7 +165,7 @@ Add guardrails that make inconsistency difficult to introduce:
 
 ### Phase 4: Embed project demos
 
-- Create demo components under `src/project-demos/`.
+- Colocate demo components with their project pages, usually as `src/app/projects/[slug]/Demo.tsx`.
 - Embed demos in the relevant `/projects/[slug]/` pages.
 - Use client components only where interaction is needed.
 - Keep static project copy server-rendered.
