@@ -42,7 +42,7 @@ Suggested dependencies:
 - `@emotion/react`
 - `@emotion/styled`
 - `typescript`
-- `eslint`
+- `oxlint`
 - `playwright`
 
 ## Suggested structure
@@ -66,11 +66,11 @@ src/
   content/
     projects.ts
     experience.ts
-  demos/
-    svg-animation/
-    maps/
-    identity-upload/
-    build-vs-buy/
+  project-demos/
+    SvgAnimationDemo.tsx
+    ResultsMapDemo.tsx
+    IdentityUploadDemo.tsx
+    BuildVsBuyDemo.tsx
   theme/
     components.ts
     theme.ts
@@ -78,6 +78,8 @@ src/
 ```
 
 Content should move into typed data modules. Reusable presentation should live in components. New portfolio sections should not hand-roll markup unless they are defining a new reusable pattern.
+
+Each current "deep dive" should become its own statically generated project page under `/projects/[slug]/`, with any interactive demo embedded directly in that page. There probably should not be a separate `/demo/` route. The homepage should tease these project pages with concise cards, summaries, and links into the full deep dives.
 
 ## Styling model
 
@@ -111,21 +113,33 @@ Add guardrails that make inconsistency difficult to introduce:
    Ban arbitrary font sizes and raw color values outside `src/theme/`.
 
 4. **Lint checks**
-   Add ESLint rules for TypeScript and React. If stylelint is added later, use it to reject ad hoc CSS growth.
+   Add oxlint for TypeScript and React. If stylelint is added later, use it to reject ad hoc CSS growth.
 
 5. **Visual regression checks**
    Add Playwright screenshots for:
    - desktop homepage
    - mobile homepage
-   - each deep dive anchor
+   - each project deep dive page
    - dark-mode homepage
    - project card grid
 
 6. **Static export check**
-   CI should run lint, typecheck, build, and static export verification.
+   CI should run lint, typecheck, tests, build, and static export verification.
 
 7. **Accessibility checks**
    Add at least heading-order and landmark checks. Interactive demos should have keyboard-accessible controls.
+
+8. **Agent handoff checks**
+   Add a repo-level `AGENTS.md` after the migration begins. It should instruct agents to run the relevant verification commands before committing, usually:
+
+   ```sh
+   yarn lint
+   yarn typecheck
+   yarn test
+   yarn build
+   ```
+
+   Once CI exists, agents should also inspect the pushed branch's GitHub Actions result before calling work complete. If the GitHub CLI is available, use `gh run list` and `gh run view` for the latest run.
 
 ## Migration phases
 
@@ -143,6 +157,8 @@ Add guardrails that make inconsistency difficult to introduce:
 - Build `Hero`, `ProjectCard`, `CaseStudy`, `ComparisonGrid`, `RoleMeta`, and `SectionHeading`.
 - Recreate the current page using only those components.
 - Preserve current anchors, including `#build-vs-buy`, so external links do not break.
+- Create static project detail pages for the current deep dives.
+- Update the homepage so it teases the deep dive pages instead of carrying every full article inline.
 
 ### Phase 3: Normalize visual language
 
@@ -151,18 +167,20 @@ Add guardrails that make inconsistency difficult to introduce:
 - Make all Percipient deep dives use the same component structure.
 - Decide whether "How I lead a front-end team" and "Growing engineers" are case studies or narrative sections, then style them intentionally.
 
-### Phase 4: Add demos
+### Phase 4: Embed project demos
 
-- Create demo slots under `src/demos/`.
+- Create demo components under `src/project-demos/`.
+- Embed demos in the relevant `/projects/[slug]/` pages.
 - Use client components only where interaction is needed.
-- Keep static project content server-rendered.
-- Lazy-load heavy demos so the homepage bundle stays small.
+- Keep static project copy server-rendered.
+- Lazy-load heavy demos so project pages hydrate only what they need.
 
 ### Phase 5: Verification
 
 - Add Playwright visual checks.
 - Add dark-mode screenshots.
 - Add static build checks in CI.
+- Add `AGENTS.md` with required agent verification commands.
 - Replace the existing generated `dist` workflow with the Next static output workflow.
 
 ## Parallel development opportunities
@@ -170,7 +188,7 @@ Add guardrails that make inconsistency difficult to introduce:
 These tracks can run mostly independently:
 
 1. **Framework scaffold**
-   Set up Next, TypeScript, MUI, static export, scripts, and CI build commands.
+   Set up Next, TypeScript, MUI, oxlint, static export, scripts, and CI build commands.
 
 2. **Theme system**
    Define typography, spacing, palette, light/dark schemes, and MUI component defaults.
@@ -185,10 +203,13 @@ These tracks can run mostly independently:
    Add Playwright screenshot infrastructure against the current site first, then repoint it to the migrated site.
 
 6. **Interactive demo planning**
-   Identify which project demos need client state, what state they own, and which can be lazy-loaded.
+   Identify which project pages need embedded demos, what state each demo owns, and which demos should be lazy-loaded.
 
 7. **Deployment workflow**
    Update the GitHub Pages workflow for the new static export output once the scaffold builds locally.
+
+8. **Agent and CI guardrails**
+   Add `AGENTS.md`, define required local commands, and wire CI to run the same checks so local agent behavior and remote enforcement match.
 
 ## Notes for the next session
 
