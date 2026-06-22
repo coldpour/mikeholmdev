@@ -50,34 +50,13 @@ export default function HomePage() {
         </Grid>
       </Box>
 
-      <Box component="section" id="projects">
-        <Stack spacing={4}>
-          <SectionHeading eyebrow="Selected work" title="Projects with room for the tradeoffs">
-            Deep dives into design systems, workflow design, spatial interfaces, and technical
-            choices that made teams faster without making the product thinner.
-          </SectionHeading>
-          <Grid container spacing={2.5}>
-            {featuredProjects.map(project => (
-              <Grid key={project.slug} size={{ xs: 12, sm: 6, md: 4 }}>
-                <ProjectCard
-                  eyebrow={project.eyebrow}
-                  href={`/projects/${project.slug}`}
-                  summary={project.summary}
-                  title={project.title}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Stack>
-      </Box>
-
       <Box
         component="section"
-        id="current-work"
+        id="leadership"
         sx={{ borderTop: 1, borderColor: 'divider', pt: { xs: 6, md: 8 } }}
       >
         <Stack spacing={4}>
-          <SectionHeading eyebrow="Current work" title="Percipient.ai">
+          <SectionHeading eyebrow="Leadership" title="Percipient.ai">
             Percipient built Mirage, an intelligence-analysis platform for national-security work. I
             set front-end technical direction for a 10-person UI group inside a 35-engineer
             organization: library and tooling decisions, repo standards, and analyst-facing
@@ -105,6 +84,27 @@ export default function HomePage() {
                     </Typography>
                   </CardContent>
                 </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Stack>
+      </Box>
+
+      <Box component="section" id="projects">
+        <Stack spacing={4}>
+          <SectionHeading eyebrow="Technical" title="Projects with room for the tradeoffs">
+            Deep dives into design systems, workflow design, spatial interfaces, and technical
+            choices that made teams faster without making the product thinner.
+          </SectionHeading>
+          <Grid container spacing={2.5}>
+            {featuredProjects.map(project => (
+              <Grid key={project.slug} size={{ xs: 12, sm: 6, md: 4 }}>
+                <ProjectCard
+                  eyebrow={project.company}
+                  href={`/projects/${project.slug}`}
+                  summary={project.summary}
+                  title={project.cardTitle}
+                />
               </Grid>
             ))}
           </Grid>

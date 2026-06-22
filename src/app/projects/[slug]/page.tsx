@@ -2,13 +2,12 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CaseStudy } from '@/components/CaseStudy'
+import { ConnectFourBoard } from '@/components/ConnectFourBoard'
 import { SiteShell } from '@/components/SiteShell'
 import { projectBySlug, projects } from '@/content/projects'
-import { Demo } from './Demo'
 
 type ProjectPageProps = {
   params: Promise<{
@@ -51,7 +50,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </Button>
           <CaseStudy project={project} />
         </Box>
-        {project.slug === 'svg-animation' ? (
+        {project.visual === 'triangles' ? (
           <Box
             aria-label="Generated triangle SVG animation preview"
             sx={{
@@ -67,9 +66,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               boxShadow: '0 24px 60px rgba(0, 0, 0, 0.18)'
             }}
           />
-        ) : (
-          <Demo title={project.title} />
-        )}
+        ) : null}
+        {project.visual === 'connect-four-board' ? <ConnectFourBoard /> : null}
         {project.links?.length ? (
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             {project.links.map(link => (
@@ -79,10 +77,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             ))}
           </Stack>
         ) : null}
-        <Typography color="text.secondary" variant="body2">
-          Static article HTML, hydrated demo surface, and shared MUI styles all come from the same
-          project-page pattern.
-        </Typography>
       </Stack>
     </SiteShell>
   )

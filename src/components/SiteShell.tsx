@@ -22,11 +22,11 @@ export function SiteShell({ children }: SiteShellProps) {
           py: 2.5
         }}
       >
-        <Link href="/#projects" underline="none">
-          Projects
+        <Link href="/#leadership" underline="none">
+          Leadership
         </Link>
-        <Link href="/#current-work" underline="none">
-          Current work
+        <Link href="/#projects" underline="none">
+          Technical
         </Link>
         <Link href="/#contact" underline="none">
           Contact

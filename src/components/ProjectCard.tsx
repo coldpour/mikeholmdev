@@ -35,8 +35,12 @@ export function ProjectCard({ href, title, summary, eyebrow }: ProjectCardProps)
               {summary}
             </Typography>
           </Stack>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', color: 'primary.main', fontWeight: 700 }}>
-            <Typography variant="body2">Read the deep dive</Typography>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center', color: 'primary.main', fontWeight: 700 }}
+          >
+            <Typography variant="body2">Dive in</Typography>
             <ArrowForwardIcon fontSize="small" />
           </Stack>
         </CardContent>

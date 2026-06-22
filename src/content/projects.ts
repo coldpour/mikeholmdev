@@ -2,6 +2,9 @@ import type { CaseStudyContent } from '@/components/CaseStudy'
 
 export type Project = CaseStudyContent & {
   homepageGroup: 'featured' | 'percipient' | 'background'
+  company: string
+  cardTitle: string
+  visual?: 'connect-four-board' | 'triangles'
   links?: Array<{
     href: string
     label: string
@@ -12,6 +15,8 @@ export const projects: Project[] = [
   {
     slug: 'results-map',
     homepageGroup: 'percipient',
+    company: 'Percipient.ai',
+    cardTitle: 'Stabilized spatial review for search results',
     eyebrow: 'Percipient deep dive',
     title: 'Maps for search result exploration',
     role: 'Principal UI Engineer, Tech Lead, spatial UX and map performance',
@@ -45,6 +50,8 @@ export const projects: Project[] = [
   {
     slug: 'identity-image-upload',
     homepageGroup: 'percipient',
+    company: 'Percipient.ai',
+    cardTitle: 'Turned ambiguous AI output into a controllable workflow',
     eyebrow: 'Percipient deep dive',
     title: 'Bulk image upload for identity creation',
     role: 'Principal UI Engineer, Tech Lead, product workflow and resilient async UX',
@@ -67,6 +74,8 @@ export const projects: Project[] = [
   {
     slug: 'library-scalability',
     homepageGroup: 'percipient',
+    company: 'Percipient.ai',
+    cardTitle: 'Made the media library linkable, scalable, and easier to debug',
     eyebrow: 'Percipient deep dive',
     title: 'Refactoring the library for scale and navigation',
     role: 'Principal UI Engineer, Tech Lead, URL architecture and scalable library UX',
@@ -101,6 +110,8 @@ export const projects: Project[] = [
   {
     slug: 'build-vs-buy',
     homepageGroup: 'percipient',
+    company: 'Percipient.ai',
+    cardTitle: 'Protected product velocity with build-vs-buy discipline',
     eyebrow: 'Percipient deep dive',
     title: 'Build vs buy for product velocity',
     role: 'Principal UI Engineer, Tech Lead, technical strategy and standardization',
@@ -133,6 +144,8 @@ export const projects: Project[] = [
   {
     slug: 'mineral-ui',
     homepageGroup: 'featured',
+    company: 'CA Technologies',
+    cardTitle: 'Moved a design system from component library to shared practice',
     eyebrow: 'Design system work',
     title: 'Mineral-UI',
     role: 'Developer advocacy and adoption, CA Technologies, 2017-2018',
@@ -160,6 +173,9 @@ export const projects: Project[] = [
   {
     slug: 'svg-animation',
     homepageGroup: 'featured',
+    company: 'Mineral-UI / coldpour',
+    cardTitle: 'Deleted runtime animation cost by generating SVG',
+    visual: 'triangles',
     eyebrow: 'Featured deep dive',
     title: 'Deleting 2000 lines of JavaScript with SVG',
     role: 'SVG animation generator',
@@ -190,6 +206,9 @@ export const projects: Project[] = [
   {
     slug: 'prolog-connect-4',
     homepageGroup: 'background',
+    company: 'St. Olaf College',
+    cardTitle: 'Modeled a playable strategy game in logic programming',
+    visual: 'connect-four-board',
     eyebrow: 'Logic programming',
     title: 'Connect 4 in Prolog',
     role: 'Logic programming final, St. Olaf College, May 2011',
