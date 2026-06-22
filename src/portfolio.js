@@ -174,7 +174,7 @@ const prologConnectFour = () =>
     { class: 'case-study', id: 'prolog-connect-4' },
     H.div(
       { class: 'section-heading' },
-      H.p({ class: 'eyebrow' }, 'Early AI project'),
+      H.p({ class: 'eyebrow' }, 'Logic programming'),
       H.h2('Connect 4 in Prolog')
     ),
     H.div(
@@ -212,14 +212,94 @@ const prologConnectFour = () =>
     )
   )
 
+const technicalLeadership = () =>
+  H.article(
+    { class: 'case-study' },
+    H.div({ class: 'section-heading' }, H.h2('How I lead a front-end team')),
+    H.div(
+      { class: 'case-study-layout' },
+      H.div(),
+      H.div(
+        { class: 'case-study-copy' },
+        H.p(
+          "I set technical direction for a 10-person front-end group inside a 35-engineer organization. I decide which libraries are in or out, what belongs in the repo, when to refactor and reuse versus build greenfield, and which paid services are worth the spend. I review all front-end code, and I review the other reviewers, so important patterns don't slip through."
+        ),
+        H.p(
+          "I can't write code faster than the other nine engineers on the team, so my job is alignment. I run a weekly engineering design forum — we call it code talk — where we work through design patterns and tradeoffs and decide together how we want to build. It's optional. Everyone comes. I've tried to cancel it twice in six years and the team asked me to bring it back both times. I maintain the team's best-practices wiki, build system, and lint rules; when someone wants to change a rule, we discuss the tradeoff in code talk and reach consensus."
+        ),
+        H.p(
+          'Decisions that started in that room and are now how the team builds:'
+        ),
+        H.ul(
+          H.li(
+            'Redux to React Query for server state — an off-the-shelf state machine, real typings, and declarative polling instead of hand-rolled slices and context hooks.'
+          ),
+          H.li(
+            "Custom spacing to Material's theme.spacing on an 8px grid, so our default implementation matches design by construction."
+          ),
+          H.li(
+            'Axios to window.fetch, because we needed to cancel in-flight requests.'
+          ),
+          H.li(
+            'Bespoke date handling to Luxon, replacing scattered parsing and formatting with one consistent approach.'
+          )
+        ),
+        H.p(
+          'I also chose Cypress for end-to-end testing and drove its adoption across the organization. That meant three different conversations: UI engineers who saw tests as extra work until I showed them, on a complex bulk-actions feature, how the tests kept me from going in circles; a QA team fluent in Selenium but not JavaScript, who now write Cypress too; and a director of engineering, on why a paid dashboard for triaging flaky and slow tests was worth more than free alternatives or building our own.'
+        ),
+        H.p(
+          "When product can't get what they need from another engineer, the problem tends to come to me. I break it down, organize the team around concrete next steps, and track it to completion."
+        )
+      )
+    )
+  )
+
+const mentorship = () =>
+  H.article(
+    { class: 'case-study' },
+    H.div({ class: 'section-heading' }, H.h2('Growing engineers')),
+    H.div(
+      { class: 'case-study-layout' },
+      H.div(),
+      H.div(
+        { class: 'case-study-copy' },
+        H.p(
+          'Over six years, around a dozen engineers came through my code reviews, code talk, and the repo standards I own. The ones who engaged grew the same way each time: we get aligned on the codebase and its patterns first, then build confidence on top of that, and I stay present as a standard they can measure themselves against.'
+        ),
+        H.ul(
+          H.li(
+            'An intern arrived fixing bugs. After a few coaching sessions on navigating the codebase and which patterns to follow versus refactor, she was shipping features on her own within a three-month tenure.'
+          ),
+          H.li(
+            'A junior engineer who had only built solo projects now proposes changes in code talk and represents the UI team in cross-engineering meetings.'
+          ),
+          H.li(
+            'One engineer went from junior to Staff. I aligned him on our patterns, then worked on his confidence — giving him highly visible projects, backing his proposals, and crediting his work to leadership.'
+          ),
+          H.li(
+            "A backend-only engineer became a full-stack contributor on complex spatial work. When he got stuck he'd pull me in to pair; we'd find the bug together and he'd carry on."
+          )
+        ),
+        H.p(
+          'I also own our hiring bar: I wrote the interview questions, screen every candidate, and set the evaluation standard. Three of our strongest engineers came from my network.'
+        )
+      )
+    )
+  )
+
 const currentWork = () =>
   H.section(
     { class: 'current-work', id: 'current-work' },
     H.div(
       { class: 'section-heading' },
       H.p({ class: 'eyebrow' }, 'Current work'),
-      H.h2('Percipient.ai')
-    )
+      H.h2('Percipient.ai'),
+      H.p(
+        'Percipient built Mirage, an intelligence-analysis platform for national-security work. I set front-end technical direction for a 10-person UI group inside a 35-engineer organization — library and tooling decisions, repo standards, and the analyst-facing workflows below.'
+      )
+    ),
+    technicalLeadership(),
+    mentorship()
   )
 
 const stateNode = (status, title, description) =>

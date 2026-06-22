@@ -8,9 +8,7 @@ module.exports = () =>
   H.address(
     { id: 'contact' },
     H.ul(
-      printOnly('3077 Fulton Cir'),
       printOnly('Boulder, CO 80301'),
-      printOnly('(973) 615-1592'),
       H.li(email('coldpour@gmail.com')),
       H.li(link('github.com/coldpour'))
     )
