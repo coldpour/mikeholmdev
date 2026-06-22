@@ -102,6 +102,7 @@ const projects = () =>
           { class: 'card-links' },
           H.a({ href: '#library-scalability' }, 'Library scalability'),
           H.a({ href: '#results-map' }, 'Results maps'),
+          H.a({ href: '#build-vs-buy' }, 'Build vs buy'),
           H.a({ href: '#identity-image-upload' }, 'Identity upload')
         )
       ),
@@ -572,6 +573,68 @@ const libraryScalability = () =>
     )
   )
 
+const buildVsBuy = () =>
+  H.article(
+    { class: 'case-study percipient-case-study', id: 'build-vs-buy' },
+    H.div(
+      { class: 'section-heading' },
+      H.p({ class: 'eyebrow' }, 'Percipient deep dive'),
+      H.h2('Build vs buy for product velocity')
+    ),
+    H.div(
+      { class: 'case-study-layout' },
+      H.p(
+        { class: 'role-meta' },
+        'Principal UI Engineer, Tech Lead, technical strategy and standardization'
+      ),
+      H.div(
+        { class: 'case-study-copy' },
+        H.p(
+          'Mirage differentiated through the unique capabilities we brought to customers, not through reimplementing solved frontend infrastructure. I pushed the team toward a build-vs-buy posture: build the domain-specific workflows that made the product valuable, and adopt mature libraries for generic problems.'
+        ),
+        H.p(
+          'That meant replacing local utilities and inconsistent patterns with well-documented ecosystem tools. The goal was to reduce maintenance surface area, improve correctness, and let engineers spend more time on customer-facing product work.'
+        ),
+        H.ul(
+          H.li(
+            'Moved date handling from custom browser-sensitive date utilities to Moment, then Luxon.'
+          ),
+          H.li('Replaced custom pluralization helpers with pluralize.'),
+          H.li(
+            'Shifted server-state management away from hand-rolled Redux slices toward React Query.'
+          ),
+          H.li(
+            'Moved user-input and API-response validation from bespoke checks to Zod schemas.'
+          ),
+          H.li(
+            'Consolidated bespoke CSS, color constants, layout styles, and inconsistent padding into Material UI with a custom theme.'
+          )
+        ),
+        H.p(
+          'The same reasoning shaped testing. We chose Cypress because it gave us a dashboard for aggregating results and managing UI-test flake over time. We wrote tests for our business logic and workflows; we did not spend startup cycles building test aggregation infrastructure.'
+        ),
+        H.div(
+          { class: 'comparison-grid' },
+          H.article(
+            H.h3('Build'),
+            H.p(
+              'Analyst workflows, search and results experiences, identity creation, spatial review, and product-specific behavior customers were paying us to solve.'
+            )
+          ),
+          H.article(
+            H.h3('Buy or adopt'),
+            H.p(
+              'Dates, pluralization, server-state caching, validation, design-system primitives, theming, layout consistency, and test-result infrastructure.'
+            )
+          )
+        ),
+        H.p(
+          'In a startup environment, those saved cycles translated directly into more complete features. Deep documentation and shared ecosystem patterns helped developers move faster, onboard more easily, and focus on the business problems instead of the edge cases of solved problems.'
+        )
+      )
+    )
+  )
+
 const earlierExperience = () =>
   H.section(
     { class: 'experience-summary' },
@@ -635,6 +698,7 @@ module.exports = () =>
       resultsMapWorkflow(),
       identityUploadWorkflow(),
       libraryScalability(),
+      buildVsBuy(),
       mineralUi(),
       deepDive(),
       prologConnectFour(),
