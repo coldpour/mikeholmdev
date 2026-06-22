@@ -18,11 +18,17 @@ export default function HomePage() {
         sx={{
           minHeight: { xs: 'auto', md: '78vh' },
           display: 'grid',
-          alignContent: 'space-between',
+          alignContent: { xs: 'start', md: 'end' },
+          alignItems: { xs: 'start', md: 'end' },
           gap: { xs: 6, md: 10 },
           borderBottom: 1,
           borderColor: 'divider',
-          pb: { xs: 6, md: 8 }
+          pb: { xs: 6, md: 8 },
+          '@media (min-width: 700px) and (min-height: 760px)': {
+            alignContent: 'end',
+            alignItems: 'end',
+            minHeight: 'calc(100vh - 2rem)'
+          }
         }}
       >
         <Grid container spacing={{ xs: 5, md: 8 }} sx={{ alignItems: 'end' }}>
