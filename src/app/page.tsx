@@ -50,11 +50,7 @@ export default function HomePage() {
         </Grid>
       </Box>
 
-      <Box
-        component="section"
-        id="leadership"
-        sx={{ borderTop: 1, borderColor: 'divider', pt: { xs: 6, md: 8 } }}
-      >
+      <Box component="section" id="leadership">
         <Stack spacing={4}>
           <SectionHeading eyebrow="Leadership" title="Percipient.ai">
             Percipient built Mirage, an intelligence-analysis platform for national-security work. I
