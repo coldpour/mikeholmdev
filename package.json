@@ -2,16 +2,13 @@
   "name": "mikeholmdev",
   "version": "1.0.0",
   "description": "my website",
-  "main": "index.js",
   "scripts": {
-    "build:html": "node index.js",
-    "build:css": "dart-sass src:dist",
-    "build": "rm -rf dist && yarn build:html && yarn build:css",
-    "watch": "nodemon index.js & dart-sass src:dist --watch",
-    "serve:dev": "for i in {8000..9000}; do lsof -i tcp:${i}; if [ 0 -ne \"$?\" ]; then reload -b -p ${i} -d dist; break; fi; done",
-    "start": "yarn watch & yarn serve:dev",
-    "lint": "standard",
-    "test": "yarn lint"
+    "dev": "next dev",
+    "build": "rm -rf dist out && next build && mv out dist",
+    "start": "next dev",
+    "lint": "oxlint .",
+    "typecheck": "tsc --noEmit",
+    "test": "yarn lint && yarn typecheck"
   },
   "repository": {
     "type": "git",
@@ -24,18 +21,18 @@
   },
   "homepage": "mikeholmdev.com",
   "devDependencies": {
-    "dart-sass": "^1.22.10",
+    "@types/node": "^26.0.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "husky": "^3.0.5",
-    "jshtml": "https://github.com/coldpour/jshtml.git",
     "lint-staged": "^9.2.5",
-    "nodemon": "^1.19.1",
-    "prettier-standard": "^14.0.3",
-    "reload": "^3.0.1",
-    "standard": "^14.1.0"
+    "oxlint": "^1.71.0",
+    "playwright": "^1.61.0",
+    "typescript": "^6.0.3"
   },
   "lint-staged": {
-    "**/*.{js,scss}": [
-      "prettier-standard --lint",
+    "**/*.{ts,tsx}": [
+      "oxlint",
       "git add"
     ]
   },
@@ -43,5 +40,15 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.1.1",
+    "@mui/material": "^9.1.1",
+    "@mui/material-nextjs": "^9.1.1",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   }
 }

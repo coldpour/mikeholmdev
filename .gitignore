@@ -1,4 +1,7 @@
 node_modules
 dist
 build
+.next
+out
+tsconfig.tsbuildinfo
 .DS_Store
