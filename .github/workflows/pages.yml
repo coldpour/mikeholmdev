@@ -42,6 +42,8 @@ jobs:
         run: yarn test
 
       - name: Build site
+        env:
+          NEXT_PUBLIC_BASE_PATH: /mikeholmdev
         run: yarn build
 
       - name: Add custom domain

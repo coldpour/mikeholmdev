@@ -3,6 +3,7 @@ import Container from '@mui/material/Container'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import type { ReactNode } from 'react'
+import { withBasePath } from '@/app/paths'
 
 type SiteShellProps = {
   children: ReactNode
@@ -22,13 +23,13 @@ export function SiteShell({ children }: SiteShellProps) {
           py: 2.5
         }}
       >
-        <Link href="/#leadership" underline="none">
+        <Link href={withBasePath('/#leadership')} underline="none">
           Leadership
         </Link>
-        <Link href="/#projects" underline="none">
+        <Link href={withBasePath('/#projects')} underline="none">
           Technical
         </Link>
-        <Link href="/#contact" underline="none">
+        <Link href={withBasePath('/#contact')} underline="none">
           Contact
         </Link>
       </Box>

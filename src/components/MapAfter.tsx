@@ -18,6 +18,8 @@ import { alpha } from '@mui/material/styles'
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useState } from 'react'
 
+import { withBasePath } from '@/app/paths'
+
 type Video = {
   id: string
   name: string
@@ -137,7 +139,7 @@ const cameras: Camera[] = [
     videos: ['vid-1304'],
     location: { lat: 37.7941, lng: -122.4004 },
     venueMap: {
-      image: '/images/financial-district-venue-map.svg',
+      image: withBasePath('/images/financial-district-venue-map.svg'),
       name: 'Financial District lobby',
       location: { x: 45, y: 40 },
       look: {
@@ -152,7 +154,7 @@ const cameras: Camera[] = [
     name: 'Lobby camera 07',
     videos: [],
     venueMap: {
-      image: '/images/financial-district-venue-map.svg',
+      image: withBasePath('/images/financial-district-venue-map.svg'),
       name: 'Financial District lobby',
       location: { x: 76, y: 72 },
       look: {

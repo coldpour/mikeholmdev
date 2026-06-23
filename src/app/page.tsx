@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import { ProjectCard } from '@/components/ProjectCard'
 import { SectionHeading } from '@/components/SectionHeading'
 import { SiteShell } from '@/components/SiteShell'
+import { withBasePath } from '@/app/paths'
 import { featuredProjects } from '@/content/projects'
 
 export default function HomePage() {
@@ -103,7 +104,7 @@ export default function HomePage() {
               <Grid key={project.slug} size={{ xs: 12, sm: 6, md: 4 }}>
                 <ProjectCard
                   eyebrow={project.company}
-                  href={`/projects/${project.slug}`}
+                  href={withBasePath(`/projects/${project.slug}`)}
                   summary={project.summary}
                   title={project.cardTitle}
                 />
@@ -139,7 +140,7 @@ export default function HomePage() {
           <Typography color="text.secondary" variant="body2">
             Education: St. Olaf College, BA Computer Science.
           </Typography>
-          <Link href="/projects/prolog-connect-4">
+          <Link href={withBasePath('/projects/prolog-connect-4')}>
             Early logic-programming project notes
           </Link>
         </Stack>

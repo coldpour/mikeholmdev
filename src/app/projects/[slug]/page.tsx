@@ -8,6 +8,7 @@ import { CaseStudy } from '@/components/CaseStudy'
 import { ConnectFourBoard } from '@/components/ConnectFourBoard'
 import { MapAfter } from '@/components/MapAfter'
 import { SiteShell } from '@/components/SiteShell'
+import { withBasePath } from '@/app/paths'
 import { projectBySlug, projects } from '@/content/projects'
 
 type ProjectPageProps = {
@@ -46,7 +47,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <SiteShell>
       <Stack spacing={{ xs: 5, md: 7 }}>
         <Box>
-          <Button href="/" sx={{ mb: 3 }}>
+          <Button href={withBasePath('/')} sx={{ mb: 3 }}>
             Back to projects
           </Button>
           <CaseStudy project={project}>
@@ -63,7 +64,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               border: 1,
               borderColor: 'divider',
               backgroundColor: 'primary.dark',
-              backgroundImage: 'url(/images/triangles.svg)',
+              backgroundImage: `url(${withBasePath('/images/triangles.svg')})`,
               backgroundPosition: 'center',
               backgroundSize: 'cover',
               boxShadow: '0 24px 60px rgba(0, 0, 0, 0.18)'
