@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="title desc">
+  <title id="title">Financial District lobby venue map</title>
+  <desc id="desc">A simplified indoor floor plan for the results map demo.</desc>
+  <rect width="960" height="560" fill="#f5f2ec"/>
+  <rect x="42" y="44" width="876" height="472" rx="18" fill="#fffdf8" stroke="#d7d0c3" stroke-width="8"/>
+  <path d="M118 116h724v84H118zM118 278h288v158H118zM474 278h368v158H474z" fill="#edf4f5" stroke="#b8c7c9" stroke-width="5"/>
+  <path d="M118 224h724M430 116v320M118 460h724" stroke="#d7d0c3" stroke-width="10" stroke-linecap="round"/>
+  <path d="M188 278v158M258 278v158M328 278v158M546 278v158M622 278v158M698 278v158M774 278v158" stroke="#d7d0c3" stroke-width="4"/>
+  <rect x="142" y="136" width="152" height="44" rx="6" fill="#d7eadf"/>
+  <rect x="334" y="136" width="152" height="44" rx="6" fill="#eadfd7"/>
+  <rect x="526" y="136" width="152" height="44" rx="6" fill="#d7e0ea"/>
+  <rect x="718" y="136" width="96" height="44" rx="6" fill="#efe8cc"/>
+  <circle cx="432" cy="224" r="22" fill="#0f5e68" opacity=".16"/>
+  <circle cx="432" cy="224" r="10" fill="#0f5e68"/>
+  <text x="118" y="92" fill="#43505c" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">Financial District Lobby</text>
+  <text x="142" y="166" fill="#43505c" font-family="Arial, Helvetica, sans-serif" font-size="18">Reception</text>
+  <text x="334" y="166" fill="#43505c" font-family="Arial, Helvetica, sans-serif" font-size="18">Elevators</text>
+  <text x="526" y="166" fill="#43505c" font-family="Arial, Helvetica, sans-serif" font-size="18">Security</text>
+  <text x="718" y="166" fill="#43505c" font-family="Arial, Helvetica, sans-serif" font-size="18">Exit</text>
+</svg>

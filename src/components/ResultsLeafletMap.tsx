@@ -9,6 +9,7 @@ type ResultsLeafletMapProps = {
   videos: MapVideo[]
   selectedVideoId: string
   onSelectVideo: (videoId: string) => void
+  fitAllRequest: number
 }
 
 function MapCenter({ center }: { center: MapCenterPoint }) {
@@ -21,8 +22,34 @@ function MapCenter({ center }: { center: MapCenterPoint }) {
   return null
 }
 
+function FitAllResults({ request, videos }: { request: number; videos: MapVideo[] }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (!request) {
+      return
+    }
+
+    const bounds = videos
+      .filter(video => video.location)
+      .map(video => [video.location?.lat ?? 0, video.location?.lng ?? 0] as MapCenterPoint)
+
+    if (bounds.length > 1) {
+      map.fitBounds(bounds, {
+        animate: true,
+        padding: [24, 24]
+      })
+    } else if (bounds.length === 1) {
+      map.setView(bounds[0], 15, { animate: true })
+    }
+  }, [map, request, videos])
+
+  return null
+}
+
 export function ResultsLeafletMap({
   center,
+  fitAllRequest,
   onSelectVideo,
   selectedVideoId,
   videos
@@ -30,6 +57,7 @@ export function ResultsLeafletMap({
   return (
     <MapContainer center={center} scrollWheelZoom={false} zoom={15}>
       <MapCenter center={center} />
+      <FitAllResults request={fitAllRequest} videos={videos} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
