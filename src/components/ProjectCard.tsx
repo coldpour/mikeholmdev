@@ -23,7 +23,8 @@ export function ProjectCard({ href, title, summary, eyebrow }: ProjectCardProps)
             flexDirection: 'column',
             justifyContent: 'space-between',
             gap: 4,
-            p: 3
+            p: 3,
+	    height: '100%',
           }}
         >
           <Stack spacing={1.5}>

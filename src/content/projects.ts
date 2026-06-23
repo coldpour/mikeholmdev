@@ -4,7 +4,7 @@ export type Project = CaseStudyContent & {
   homepageGroup: 'featured' | 'percipient' | 'background'
   company: string
   cardTitle: string
-  visual?: 'connect-four-board' | 'triangles'
+  visual?: 'connect-four-board' | 'map-after' | 'triangles'
   links?: Array<{
     href: string
     label: string
@@ -17,6 +17,7 @@ export const projects: Project[] = [
     homepageGroup: 'percipient',
     company: 'Percipient.ai',
     cardTitle: 'Stabilized spatial review for search results',
+    visual: 'map-after',
     eyebrow: 'Percipient deep dive',
     title: 'Maps for search result exploration',
     role: 'Principal UI Engineer, Tech Lead, spatial UX and map performance',

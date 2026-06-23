@@ -4,6 +4,7 @@ import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import type { ReactNode } from 'react'
 import { SectionHeading } from './SectionHeading'
 
 export type Comparison = {
@@ -24,13 +25,15 @@ export type CaseStudyContent = {
 
 type CaseStudyProps = {
   project: CaseStudyContent
+  children?: ReactNode
 }
 
-export function CaseStudy({ project }: CaseStudyProps) {
+export function CaseStudy({ children, project }: CaseStudyProps) {
   return (
     <Box component="article" id={project.slug}>
       <Stack spacing={{ xs: 4, md: 5 }}>
         <SectionHeading eyebrow={project.eyebrow} title={project.title} />
+        {children}
         <Grid container spacing={{ xs: 3, md: 6 }}>
           <Grid size={{ xs: 12, md: 3 }}>
             <Typography color="text.secondary" variant="body2">

@@ -1,6 +1,7 @@
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import 'leaflet/dist/leaflet.css'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {

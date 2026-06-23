@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CaseStudy } from '@/components/CaseStudy'
 import { ConnectFourBoard } from '@/components/ConnectFourBoard'
+import { MapAfter } from '@/components/MapAfter'
 import { SiteShell } from '@/components/SiteShell'
 import { projectBySlug, projects } from '@/content/projects'
 
@@ -48,7 +49,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <Button href="/" sx={{ mb: 3 }}>
             Back to projects
           </Button>
-          <CaseStudy project={project} />
+          <CaseStudy project={project}>
+            {project.visual === 'map-after' ? <MapAfter /> : null}
+          </CaseStudy>
         </Box>
         {project.visual === 'triangles' ? (
           <Box
