@@ -21,7 +21,7 @@ export const projects: Project[] = [
     title: 'Building mikeholmmusic.com',
     role: 'Music-site architecture, mobile-first UX, release data modeling, privacy-light personalization',
     summary:
-      'Built a mobile-first music site that makes songs easier to discover, keeps media fast through CDN-hosted images, and remembers listener preference without tracking users.',
+      'Gave listeners one low-friction place to find my music and gave myself a lightweight system for publishing songs, artwork, and process notes without repo bloat or user tracking.',
     body: [
       'MikeHolmMusic.com solves a small but real problem: every listener has a different music app. Sending someone a Spotify link, an Apple Music link, or a YouTube Music link always leaves some people doing the manual translation layer themselves. The site gives me one place to share, then lets the listener pick the service that works for them.',
       'The architecture is centered on release data. Songs and albums are modeled with slugs, titles, artists, cover images, descriptions, lyrics, album relationships, and service links. React Router loaders resolve each song or album by slug, return a 404 when the release does not exist, and generate per-release metadata so individual songs have shareable pages instead of being trapped in a single link list.',
