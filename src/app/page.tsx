@@ -96,9 +96,10 @@ export default function HomePage() {
 
       <Box component="section" id="projects">
         <Stack spacing={4}>
-          <SectionHeading eyebrow="Technical" title="Projects with room for the tradeoffs">
+          <SectionHeading eyebrow="Technical" title="Work that holds up under pressure">
             Deep dives into design systems, workflow design, spatial interfaces, and technical
-            choices that made teams faster without making the product thinner.
+            choices that helped teams move quickly while keeping the software clear, extensible,
+            and trustworthy.
           </SectionHeading>
           <Grid container spacing={2.5}>
             {featuredProjects.map(project => (
