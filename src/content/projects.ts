@@ -13,6 +13,57 @@ export type Project = CaseStudyContent & {
 
 export const projects: Project[] = [
   {
+    slug: 'redkarma13',
+    homepageGroup: 'featured',
+    company: 'Red Karma',
+    cardTitle: 'Built a resilient static site for a working tribute band',
+    eyebrow: 'Featured deep dive',
+    title: 'Building redkarma13.com',
+    role: 'Site architecture, static build pipeline, responsive UI, SEO-oriented content structure',
+    summary:
+      'Built a fast, maintainable band site where free hosting, free email, and phone-editable show data replaced an unaffordable subscription.',
+    body: [
+      'Red Karma needed the kind of site that matters for a working band: the name and offer have to be obvious immediately, upcoming shows need to be current, venues and ticket links need to be easy to scan, and booking contact information has to be reachable without making the visitor work.',
+      'The architecture is deliberately small. The published site is static HTML, CSS, a few images and fonts, and two tiny progressive-enhancement scripts. Show data lives in a plain shows.txt file, then a Node build script parses it, validates it, sorts it, escapes generated text, and injects the resulting markup into index.html and past.html between explicit build markers.',
+      'The business constraint mattered as much as the technical one. The band had been paying for a website subscription, and that recurring fee came straight out of money the band members could otherwise keep. By moving to free static hosting and free email while preserving the same public functionality, the site stopped acting like an ongoing tax on a small band.',
+      'That data flow keeps the site robust because the expensive and failure-prone work happens before deploy. If a show block has the wrong shape, an invalid date, or an unsupported call-to-action, the build fails instead of publishing malformed markup. If JavaScript fails in the browser, the core content is still present in the HTML: the band description, show list, ticket links, merch, mailing list, socials, videos, and booking contact are all readable without client rendering.',
+      'Maintenance is intentionally low-friction because the real workflow happens from the GitHub app on my phone. Adding a show takes as few characters as possible: date, venue, location, optional link, and optional cta. The script checks my work, generates the repeated markup, and keeps the upcoming and past-show pages in sync without making me edit HTML cards by hand.',
+      'The SEO benefit comes from shipping meaningful content as document content, not app state or artwork. The band name is text, not an image, so robots can read RED KARMA directly. The live page exposes a clear title, semantic sections, descriptive copy, venue names, locations, dates, and ordinary links on first request.',
+      'Shows are rendered into both the homepage and the past-shows page, then CSS uses classes from data-date attributes to hide whichever side does not belong for the current day. If someone leaves the site open in a tab and comes back the next day, a show can drop off the upcoming list and appear in the past-show archive without needing a redeploy.',
+      'The mailing-list form is treated as production infrastructure, not a decorative embed. There is an end-to-end health check for the Mailchimp signup path, and if a new subscriber cannot be added, I get an email instead of discovering the problem after fans have already tried to sign up.',
+      'The responsive behavior is poster-like rather than ordinary reflow. The page keeps the proportions of the hero, typography, video, and show treatments across screen sizes so the design still feels like band collateral instead of a desktop layout squeezed onto mobile. The past-shows page leans into that, styling the archive like an Eras Tour shirt: big dates, year breaks, uppercase venue type, and a narrow concert-merch rhythm.'
+    ],
+    bullets: [
+      'Replaced a paid website subscription with free static hosting and free email so recurring web costs no longer reduced band member profit.',
+      'Used shows.txt as the durable editing surface so show updates can be made quickly from the GitHub mobile app.',
+      'Generated index.html and past.html from one source of truth to avoid duplicate show maintenance.',
+      'Escaped generated venue, location, and link text before injecting it into HTML.',
+      'Validated show block length, date format, month/day ranges, and allowed cta values during the build.',
+      'Rendered all shows into both pages, then used data-date attributes, a small deferred script, and CSS classes to split past and future lists over time.',
+      'Kept the band name as real text instead of a logo image so crawlers, screen readers, and copy/paste all see the same primary identity.',
+      'Added an end-to-end Mailchimp signup monitor with email alerting for subscriber-add failures.',
+      'Added reduced-motion and pointer checks to the sparkle trail so the visual flourish avoids touch devices and motion-sensitive users.',
+      'Used proportional, viewport-aware sizing so the page scales like a poster while preserving the intended visual relationships.',
+      'Styled past shows as a concert-shirt archive rather than a generic event table.'
+    ],
+    comparison: [
+      {
+        title: 'Easy to Maintain',
+        body: 'The site can be kept current from a phone by changing tiny plain-text show entries. The script validates the input and regenerates layout, ticket buttons, and archive history.'
+      },
+      {
+        title: 'Cheaper and Findable',
+        body: 'Free hosting and email preserve the same functionality without a recurring subscription. The static HTML remains easy for robots to read: text band name, show dates, venues, locations, links, and booking details.'
+      }
+    ],
+    links: [
+      {
+        href: 'https://redkarma13.com',
+        label: 'Visit redkarma13.com'
+      }
+    ]
+  },
+  {
     slug: 'results-map',
     homepageGroup: 'percipient',
     company: 'Percipient.ai',
