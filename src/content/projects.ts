@@ -13,6 +13,53 @@ export type Project = CaseStudyContent & {
 
 export const projects: Project[] = [
   {
+    slug: 'mikeholmmusic',
+    homepageGroup: 'featured',
+    company: 'Mike Holm Music',
+    cardTitle: 'Reduced listening friction without tracking fans',
+    eyebrow: 'Featured deep dive',
+    title: 'Building mikeholmmusic.com',
+    role: 'Music-site architecture, mobile-first UX, release data modeling, privacy-light personalization',
+    summary:
+      'Minimized friction when sharing music without compromising user privacy.',
+    body: [
+      'MikeHolmMusic.com solves a small but real problem: every listener has a different music app. Sending someone a Spotify link, an Apple Music link, or a YouTube Music link always leaves some people doing the manual translation layer themselves. The site gives me one place to share, then lets the listener pick the service that works for them.',
+      'The architecture is centered on release data. Songs and albums are modeled with slugs, titles, artists, cover images, descriptions, lyrics, album relationships, and service links. React Router loaders resolve each song or album by slug, return a 404 when the release does not exist, and generate per-release metadata so individual songs have shareable pages instead of being trapped in a single link list.',
+      'The most useful interaction is intentionally privacy-light. When someone clicks a listening service, the app stores only that preferred service in localStorage. It does not identify the person or track what they played. On the next song page, the site uses that local preference to hide the extra links and keep the listener focused on the app they already use, while still offering a Show all services escape hatch.',
+      'The link filtering has one musician-specific rule: Bandcamp stays visible when it exists, even if the listener prefers another streaming service. That keeps the purchase/support path available without forcing every listener to scan a full grid of Spotify, Apple Music, YouTube Music, Amazon, Tidal, Deezer, and SoundCloud links every time.',
+      'Images are hosted in Cloudinary instead of being committed into GitHub. The repo stays small and text-focused, while release art is still delivered from a CDN with transformation parameters like automatic format, automatic quality, width limiting, and contain sizing. That keeps the page visually rich without turning the source repository into an image archive.',
+      'The song pages also act like liner notes that never went to print. For songs I wrote or worked on, the site can show lyrics, collaborators, credits, album relationships, and notes about what I contributed: drum parts, engineering choices, influences, studio constraints, and how a track developed. Because I am bad at writing about myself directly, I used AI as an interviewer to iteratively pull out those details from conversation and turn them into usable release notes.',
+      'The design is mobile-first because that is where music discovery usually happens: someone opens a link from a text, social profile, venue conversation, or QR code and needs to get to a listening app quickly. The desktop design is intentionally less elaborate for now; the core job is a clean phone experience with large cover art, direct service buttons, readable notes, and minimal friction.'
+    ],
+    bullets: [
+      'Modeled songs and albums as structured release data with typed service links, lyrics, descriptions, and album-track relationships.',
+      'Used React Router loaders and per-release metadata so each song and album has a direct, shareable URL.',
+      'Stored only a preferred listening service in localStorage, avoiding account state, analytics identity, or listener tracking.',
+      'Filtered service links to the listener preference plus Bandcamp when available, reducing choice overload while preserving the support path.',
+      'Kept release artwork out of the GitHub repo by using Cloudinary-hosted images with CDN delivery and transformation parameters.',
+      'Used AI as an interviewer to draw out process notes, credits, memories, and songwriting context that were hard to write cold.',
+      'Added song-level notes that explain my role in the process, like drums, engineering, arrangement choices, influences, and collaborators.',
+      'Backed the preference behavior, release data, and routes with focused tests so the small conveniences stay reliable.',
+      'Designed the experience mobile-first, prioritizing quick listening actions and readable notes over a more ornamental desktop layout.'
+    ],
+    comparison: [
+      {
+        title: 'Less Friction',
+        body: 'One shareable song page can route listeners to the app they actually use. After they pick once, future pages show the useful links first instead of making them scan every service again.'
+      },
+      {
+        title: 'More Context',
+        body: 'Song pages become personal liner notes: lyrics, collaborators, credits, and process notes that explain what I contributed and how the recording came together.'
+      }
+    ],
+    links: [
+      {
+        href: 'https://mikeholmmusic.com',
+        label: 'Visit mikeholmmusic.com'
+      }
+    ]
+  },
+  {
     slug: 'redkarma13',
     homepageGroup: 'featured',
     company: 'Red Karma',
@@ -21,7 +68,7 @@ export const projects: Project[] = [
     title: 'Building redkarma13.com',
     role: 'Site architecture, static build pipeline, responsive UI, SEO-oriented content structure',
     summary:
-      'Built a fast, maintainable band site where free hosting, free email, and phone-editable show data replaced an unaffordable subscription.',
+      'Built a band site optimized to save time and money while delivering strong SEO, a polished fan experience, and automatic problem monitoring.',
     body: [
       'Red Karma needed the kind of site that matters for a working band: the name and offer have to be obvious immediately, upcoming shows need to be current, venues and ticket links need to be easy to scan, and booking contact information has to be reachable without making the visitor work.',
       'The architecture is deliberately small. The published site is static HTML, CSS, a few images and fonts, and two tiny progressive-enhancement scripts. Show data lives in a plain shows.txt file, then a Node build script parses it, validates it, sorts it, escapes generated text, and injects the resulting markup into index.html and past.html between explicit build markers.',
