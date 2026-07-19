@@ -36,10 +36,11 @@ export default function HomePage() {
           <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2}>
               <Typography variant="overline">Mike Holm</Typography>
-              <Typography variant="h1">Software engineer for durable product interfaces</Typography>
+              <Typography variant="h1">Fast enough to matter. Built well enough to last.</Typography>
               <Typography color="text.secondary" sx={{ maxWidth: 680 }} variant="body1">
-                I build front-end systems, product workflows, and technical foundations that make
-                complex software easier to understand, extend, and trust.
+                I help teams ship faster without lowering the bar. I build front-end systems,
+                product workflows, and technical foundations that make complex software easier to
+                understand, extend, and trust.
               </Typography>
             </Stack>
           </Grid>

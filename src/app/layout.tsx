@@ -7,7 +7,7 @@ import { Providers } from './providers'
 export const metadata: Metadata = {
   title: 'Mike Holm | Portfolio',
   description:
-    'Front-end systems, product workflows, design systems, and durable engineering for complex software.',
+    'Fast product engineering, front-end systems, and technical foundations for complex software.',
   metadataBase: new URL('https://mikeholmdev.com')
 }
 
