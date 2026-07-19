@@ -21,7 +21,7 @@ export const projects: Project[] = [
     title: 'Building redkarma13.com',
     role: 'Site architecture, static build pipeline, responsive UI, SEO-oriented content structure',
     summary:
-      'Built a fast, maintainable band site where free hosting, free email, and phone-editable show data replaced an unaffordable subscription.',
+      'Built a band site optimized to save time and money while delivering strong SEO, a polished fan experience, and automatic problem monitoring.',
     body: [
       'Red Karma needed the kind of site that matters for a working band: the name and offer have to be obvious immediately, upcoming shows need to be current, venues and ticket links need to be easy to scan, and booking contact information has to be reachable without making the visitor work.',
       'The architecture is deliberately small. The published site is static HTML, CSS, a few images and fonts, and two tiny progressive-enhancement scripts. Show data lives in a plain shows.txt file, then a Node build script parses it, validates it, sorts it, escapes generated text, and injects the resulting markup into index.html and past.html between explicit build markers.',
