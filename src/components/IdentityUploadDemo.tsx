@@ -219,24 +219,6 @@ const identityUploadMachine = setup({
         ]
       }
     },
-    uploadProblem: {
-      on: {
-        START_UPLOAD: {
-          target: 'uploading',
-          actions: assign({
-            images: ({ context }) =>
-              context.images.map(image => ({
-                ...image,
-                uploadStatus: 'fetching',
-                detectionStatus: 'initial',
-                identityStatus: 'initial',
-                faces: [],
-                selectedFaceId: undefined,
-              }))
-          })
-        }
-      }
-    },
     retryingUpload: {
       on: {
         UPLOAD_RETRY_RESOLVED: [
@@ -253,11 +235,31 @@ const identityUploadMachine = setup({
                   identityStatus: 'initial',
                   faces: image.id === event.imageId ? [] : image.faces,
                   selectedFaceId: image.id === event.imageId ? undefined : image.selectedFaceId
-                }))
+              }))
             })
           },
           {
-            target: 'uploadProblem',
+            guard: ({ context, event }) =>
+              event.outcome === 'error' && context.images.some(image => image.id !== event.imageId && image.detectionStatus === 'fetching'),
+            target: 'detecting',
+            actions: assign({
+              images: ({ context, event }) =>
+                context.images.map(image =>
+                  image.id === event.imageId
+                    ? {
+                        ...image,
+                        uploadStatus: 'error',
+                        detectionStatus: 'initial',
+                        identityStatus: 'initial',
+                        faces: [],
+                        selectedFaceId: undefined
+                      }
+                    : image
+                )
+            })
+          },
+          {
+            target: 'reviewing',
             actions: assign({
               images: ({ context, event }) =>
                 context.images.map(image =>
@@ -553,10 +555,9 @@ const requestColor: Record<RequestStatus, 'default' | 'primary' | 'success' | 'w
 const stateNodes = [
   { id: 'idle', label: 'Initial' },
   { id: 'uploading', label: 'Upload images' },
-  { id: 'uploadProblem', label: 'Upload problem' },
   { id: 'retryingUpload', label: 'Retry upload' },
   { id: 'detecting', label: 'Detect faces' },
-  { id: 'retryingDetections', label: 'Auto retry detections' },
+  { id: 'retryingDetections', label: 'Retry detections' },
   { id: 'reviewing', label: 'Review selections' },
   { id: 'disambiguating', label: 'Disambiguate' },
   { id: 'creatingIdentity', label: 'Create identity' },
@@ -565,6 +566,48 @@ const stateNodes = [
   { id: 'retryingAddImagesToIdentity', label: 'Retry add images' },
   { id: 'complete', label: 'Complete' }
 ]
+
+const stateTransitions = [
+  { from: 'idle', to: 'uploading' },
+  { from: 'uploading', to: 'detecting' },
+  { from: 'detecting', to: 'retryingUpload' },
+  { from: 'reviewing', to: 'retryingUpload' },
+  { from: 'retryingUpload', to: 'detecting' },
+  { from: 'retryingUpload', to: 'reviewing' },
+  { from: 'detecting', to: 'reviewing' },
+  { from: 'detecting', to: 'retryingDetections' },
+  { from: 'retryingDetections', to: 'detecting' },
+  { from: 'reviewing', to: 'disambiguating' },
+  { from: 'disambiguating', to: 'reviewing' },
+  { from: 'reviewing', to: 'creatingIdentity' },
+  { from: 'creatingIdentity', to: 'retryingCreateIdentity' },
+  { from: 'retryingCreateIdentity', to: 'creatingIdentity' },
+  { from: 'creatingIdentity', to: 'addingImagesToIdentity' },
+  { from: 'creatingIdentity', to: 'complete' },
+  { from: 'addingImagesToIdentity', to: 'retryingAddImagesToIdentity' },
+  { from: 'retryingAddImagesToIdentity', to: 'addingImagesToIdentity' },
+  { from: 'addingImagesToIdentity', to: 'complete' }
+]
+
+const graphSize = {
+  width: 1280,
+  height: 430
+}
+
+const stateGraphNodes: Record<string, { x: number; y: number; width: number; height: number }> = {
+  idle: { x: 32, y: 186, width: 122, height: 58 },
+  uploading: { x: 184, y: 186, width: 142, height: 58 },
+  retryingUpload: { x: 348, y: 50, width: 146, height: 58 },
+  detecting: { x: 356, y: 186, width: 132, height: 58 },
+  retryingDetections: { x: 340, y: 322, width: 164, height: 58 },
+  reviewing: { x: 524, y: 186, width: 166, height: 58 },
+  disambiguating: { x: 530, y: 50, width: 154, height: 58 },
+  creatingIdentity: { x: 724, y: 186, width: 156, height: 58 },
+  retryingCreateIdentity: { x: 734, y: 50, width: 136, height: 58 },
+  addingImagesToIdentity: { x: 914, y: 186, width: 136, height: 58 },
+  retryingAddImagesToIdentity: { x: 892, y: 50, width: 180, height: 58 },
+  complete: { x: 1080, y: 186, width: 162, height: 58 }
+}
 
 function readyForIdentity(images: UploadImage[]) {
   return (
@@ -581,6 +624,85 @@ function uploadsCompleteAfterRetry(images: UploadImage[], retriedImageId: string
 
 function shouldResolveDetection(image: UploadImage) {
   return image.uploadStatus === 'successFull' && image.detectionStatus === 'fetching'
+}
+
+function nodeAnchor(nodeId: string, side: 'top' | 'right' | 'bottom' | 'left') {
+  const node = stateGraphNodes[nodeId]
+  const centerX = node.x + node.width / 2
+  const centerY = node.y + node.height / 2
+
+  if (side === 'top') {
+    return { x: centerX, y: node.y }
+  }
+
+  if (side === 'right') {
+    return { x: node.x + node.width, y: centerY }
+  }
+
+  if (side === 'bottom') {
+    return { x: centerX, y: node.y + node.height }
+  }
+
+  return { x: node.x, y: centerY }
+}
+
+function getTransitionPath(fromId: string, toId: string) {
+  const pathKey = `${fromId}->${toId}`
+
+  if (pathKey === 'creatingIdentity->complete') {
+    const start = nodeAnchor('creatingIdentity', 'bottom')
+    const end = nodeAnchor('complete', 'bottom')
+
+    return `M ${start.x} ${start.y} C ${start.x} 332, ${end.x} 332, ${end.x} ${end.y}`
+  }
+
+  const from = stateGraphNodes[fromId]
+  const to = stateGraphNodes[toId]
+
+  if (!from || !to) {
+    return ''
+  }
+
+  const fromCenter = {
+    x: from.x + from.width / 2,
+    y: from.y + from.height / 2
+  }
+  const toCenter = {
+    x: to.x + to.width / 2,
+    y: to.y + to.height / 2
+  }
+  const dx = toCenter.x - fromCenter.x
+  const dy = toCenter.y - fromCenter.y
+  const startScale = Math.min(from.width / 2 / Math.max(Math.abs(dx), 1), from.height / 2 / Math.max(Math.abs(dy), 1))
+  const endScale = Math.min(to.width / 2 / Math.max(Math.abs(dx), 1), to.height / 2 / Math.max(Math.abs(dy), 1))
+  const start = {
+    x: fromCenter.x + dx * startScale,
+    y: fromCenter.y + dy * startScale
+  }
+  const end = {
+    x: toCenter.x - dx * endScale,
+    y: toCenter.y - dy * endScale
+  }
+  const hasReverse = stateTransitions.some(transition => transition.from === toId && transition.to === fromId)
+  const bend = hasReverse ? (fromId < toId ? -34 : 34) : 0
+  const length = Math.hypot(dx, dy) || 1
+  const control = {
+    x: (start.x + end.x) / 2 + (-dy / length) * bend,
+    y: (start.y + end.y) / 2 + (dx / length) * bend
+  }
+
+  return `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${end.x} ${end.y}`
+}
+
+function splitStateLabel(label: string) {
+  if (label.length <= 18) {
+    return [label]
+  }
+
+  const words = label.split(' ')
+  const midpoint = Math.ceil(words.length / 2)
+
+  return [words.slice(0, midpoint).join(' '), words.slice(midpoint).join(' ')]
 }
 
 function randomLatency() {
@@ -681,6 +803,8 @@ function IdentityUploadDemo() {
   const { images, activeImageId, draftFaceId, identityId } = snapshot.context
   const activeImage = images.find(image => image.id === activeImageId)
   const canCreateIdentity = readyForIdentity(images)
+  const hasUploadError = images.some(image => image.uploadStatus === 'error')
+  const needsDisambiguation = images.some(image => image.faces.length > 1 && !image.selectedFaceId)
   const currentState = String(snapshot.value)
   const isInitial = snapshot.matches('idle')
 
@@ -772,7 +896,12 @@ function IdentityUploadDemo() {
       <Card>
         <CardContent data-testid="identity-upload-demo">
           <Stack spacing={3}>
-            <StateMachineDiagram currentState={currentState} />
+            <StateMachineDiagram
+              canCreateIdentity={canCreateIdentity}
+              currentState={currentState}
+              hasUploadError={hasUploadError}
+              needsDisambiguation={needsDisambiguation}
+            />
             <Divider />
             {snapshot.matches('disambiguating') && activeImage ? (
               <DisambiguationScreen
@@ -882,7 +1011,7 @@ function Toolbar({
     state === 'retryingCreateIdentity' ||
     state === 'addingImagesToIdentity' ||
     state === 'retryingAddImagesToIdentity'
-  const canStartUpload = state === 'idle' || state === 'uploadProblem'
+  const canStartUpload = state === 'idle'
   const canShowCreateIdentity = state !== 'idle' && state !== 'complete'
   const canShowReset = state !== 'idle'
 
@@ -1235,10 +1364,33 @@ function DisambiguationScreen({ draftFaceId, image, onBack, onConfirm, onSelectF
 }
 
 type StateMachineDiagramProps = {
+  canCreateIdentity: boolean
   currentState: string
+  hasUploadError: boolean
+  needsDisambiguation: boolean
 }
 
-function StateMachineDiagram({ currentState }: StateMachineDiagramProps) {
+function StateMachineDiagram({ canCreateIdentity, currentState, hasUploadError, needsDisambiguation }: StateMachineDiagramProps) {
+  const isTransitionAvailable = (transition: (typeof stateTransitions)[number]) => {
+    if (currentState !== transition.from) {
+      return false
+    }
+
+    if (transition.to === 'retryingUpload') {
+      return hasUploadError
+    }
+
+    if (transition.from === 'reviewing' && transition.to === 'disambiguating') {
+      return needsDisambiguation
+    }
+
+    if (transition.from === 'reviewing' && transition.to === 'creatingIdentity') {
+      return canCreateIdentity
+    }
+
+    return true
+  }
+
   return (
     <Stack spacing={2}>
       <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
@@ -1248,39 +1400,124 @@ function StateMachineDiagram({ currentState }: StateMachineDiagramProps) {
         </Typography>
       </Stack>
       <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(4, minmax(0, 1fr))' },
-          gap: 1.5
-        }}
-      >
-        {stateNodes.map(node => {
-          const active = currentState === node.id
-
-          return (
-            <Box
-              key={node.id}
-              sx={theme => ({
-                minHeight: 76,
-                border: 1,
-                borderColor: active ? 'primary.main' : 'divider',
-                borderRadius: 1,
-                p: 1.5,
-                bgcolor: active ? alpha(theme.palette.primary.main, 0.12) : 'background.default',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 1
-              })}
-            >
-              <Typography sx={{ fontWeight: active ? 700 : 500 }} variant="body2">
-                {node.label}
-              </Typography>
-              {active ? <Chip color="primary" label="Active" size="small" /> : null}
-            </Box>
-          )
+        sx={theme => ({
+          overflow: 'hidden',
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: 1,
+          bgcolor: 'background.default',
+          boxShadow: `inset 0 0 0 1px ${alpha(theme.palette.background.paper, 0.72)}`
         })}
+      >
+        <Box
+          aria-label="Identity image upload state machine"
+          component="svg"
+          role="img"
+          viewBox={`0 0 ${graphSize.width} ${graphSize.height}`}
+          sx={{
+            display: 'block',
+            width: '100%',
+            height: 'auto'
+          }}
+        >
+          <defs>
+            <marker id="state-arrow-muted" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+              <path d="M 0 0 L 8 4 L 0 8 z" fill="currentColor" />
+            </marker>
+            <marker id="state-arrow-active" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
+              <path d="M 0 0 L 8 4 L 0 8 z" fill="currentColor" />
+            </marker>
+          </defs>
+          {stateTransitions.map(transition => {
+            const possible = isTransitionAvailable(transition)
+            const unavailableOutgoing = currentState === transition.from && !possible
+            const adjacent = possible || currentState === transition.to
+
+            return (
+              <path
+                d={getTransitionPath(transition.from, transition.to)}
+                fill="none"
+                key={`${transition.from}-${transition.to}`}
+                markerEnd={possible ? 'url(#state-arrow-active)' : 'url(#state-arrow-muted)'}
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                strokeDasharray={unavailableOutgoing ? '7 9' : undefined}
+                style={{
+                  color: possible
+                    ? 'var(--mui-palette-primary-main)'
+                    : adjacent
+                      ? 'var(--mui-palette-text-secondary)'
+                      : 'var(--mui-palette-divider)',
+                  opacity: possible ? 1 : adjacent ? 0.72 : 0.42
+                }}
+              />
+            )
+          })}
+          {stateNodes.map(node => {
+            const active = currentState === node.id
+            const possibleTarget = stateTransitions.some(transition => transition.to === node.id && isTransitionAvailable(transition))
+            const graphNode = stateGraphNodes[node.id]
+            const labelLines = splitStateLabel(node.label)
+            const textStartY = graphNode.y + graphNode.height / 2 - (labelLines.length - 1) * 11
+
+            return (
+              <g key={node.id}>
+                {active ? (
+                  <rect
+                    fill="var(--mui-palette-primary-main)"
+                    fillOpacity="0.14"
+                    height={graphNode.height + 12}
+                    rx="10"
+                    stroke="none"
+                    width={graphNode.width + 12}
+                    x={graphNode.x - 6}
+                    y={graphNode.y - 6}
+                  />
+                ) : null}
+                <rect
+                  fill={active || possibleTarget ? 'var(--mui-palette-primary-main)' : 'var(--mui-palette-background-paper)'}
+                  fillOpacity={active ? 0.16 : possibleTarget ? 0.08 : 1}
+                  height={graphNode.height}
+                  rx="8"
+                  stroke={active || possibleTarget ? 'var(--mui-palette-primary-main)' : 'var(--mui-palette-divider)'}
+                  strokeWidth={active ? 3 : possibleTarget ? 2 : 1.5}
+                  width={graphNode.width}
+                  x={graphNode.x}
+                  y={graphNode.y}
+                />
+                {active ? (
+                  <circle
+                    cx={graphNode.x + graphNode.width - 13}
+                    cy={graphNode.y + 13}
+                    fill="var(--mui-palette-primary-main)"
+                    r="5"
+                  />
+                ) : null}
+                <text
+                  dominantBaseline="middle"
+                  fill="var(--mui-palette-text-primary)"
+                  fontFamily="var(--mui-font-h3-fontFamily), var(--mui-fontFamily)"
+                  fontSize="17"
+                  fontWeight={active ? 700 : 500}
+                  x={graphNode.x + 14}
+                  y={textStartY}
+                >
+                  {labelLines.map((line, index) => (
+                    <tspan dy={index === 0 ? 0 : 22} key={line} x={graphNode.x + 14}>
+                      {line}
+                    </tspan>
+                  ))}
+                </text>
+              </g>
+            )
+          })}
+        </Box>
       </Box>
+      <Typography color="text.secondary" variant="body2">
+        Active states and available outgoing arrows use the primary color; unavailable guarded paths stay muted.
+      </Typography>
     </Stack>
   )
 }
