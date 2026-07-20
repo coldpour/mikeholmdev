@@ -1,24 +1,38 @@
 'use client'
 
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import AccessibilityIcon from '@mui/icons-material/Accessibility'
+import AccessibleIcon from '@mui/icons-material/Accessible'
+import AirlineSeatLegroomExtraIcon from '@mui/icons-material/AirlineSeatLegroomExtra'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import BadgeIcon from '@mui/icons-material/Badge'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CloseIcon from '@mui/icons-material/Close'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import ConstructionIcon from '@mui/icons-material/Construction'
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun'
+import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk'
+import Diversity3Icon from '@mui/icons-material/Diversity3'
+import ElderlyIcon from '@mui/icons-material/Elderly'
+import ElderlyWomanIcon from '@mui/icons-material/ElderlyWoman'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutlineOutlined'
 import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural'
+import ForestIcon from '@mui/icons-material/Forest'
 import GroupsIcon from '@mui/icons-material/Groups'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
+import ParkIcon from '@mui/icons-material/Park'
+import PersonIcon from '@mui/icons-material/Person'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
+import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi'
+import WhatshotIcon from '@mui/icons-material/Whatshot'
+import WcIcon from '@mui/icons-material/Wc'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import ButtonBase from '@mui/material/ButtonBase'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
-import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -47,11 +61,49 @@ type Face = {
 type UploadImage = {
   id: string
   name: string
+  sceneIcon: SceneIconName
+  willFindFaces: boolean
+  willNeedDisambiguation: boolean
   uploadStatus: RequestStatus
   detectionStatus: RequestStatus
   identityStatus: RequestStatus
   faces: Face[]
   selectedFaceId?: string
+}
+
+type SceneIconName =
+  | 'accessible'
+  | 'accessibility'
+  | 'airlineSeatLegroomExtra'
+  | 'construction'
+  | 'directionsCar'
+  | 'directionsRun'
+  | 'directionsWalk'
+  | 'diversity'
+  | 'elderly'
+  | 'elderlyWoman'
+  | 'forest'
+  | 'park'
+  | 'sportsKabaddi'
+  | 'whatshot'
+  | 'wc'
+
+const sceneIcons = {
+  accessible: AccessibleIcon,
+  accessibility: AccessibilityIcon,
+  airlineSeatLegroomExtra: AirlineSeatLegroomExtraIcon,
+  construction: ConstructionIcon,
+  directionsCar: DirectionsCarIcon,
+  directionsRun: DirectionsRunIcon,
+  directionsWalk: DirectionsWalkIcon,
+  diversity: Diversity3Icon,
+  elderly: ElderlyIcon,
+  elderlyWoman: ElderlyWomanIcon,
+  forest: ForestIcon,
+  park: ParkIcon,
+  sportsKabaddi: SportsKabaddiIcon,
+  whatshot: WhatshotIcon,
+  wc: WcIcon
 }
 
 type MachineContext = {
@@ -84,6 +136,9 @@ const initialImages: UploadImage[] = [
   {
     id: 'portrait',
     name: 'Badge portrait.jpg',
+    sceneIcon: 'directionsWalk',
+    willFindFaces: true,
+    willNeedDisambiguation: false,
     uploadStatus: 'initial',
     detectionStatus: 'initial',
     identityStatus: 'initial',
@@ -92,6 +147,9 @@ const initialImages: UploadImage[] = [
   {
     id: 'platform',
     name: 'Transit platform.png',
+    sceneIcon: 'directionsCar',
+    willFindFaces: false,
+    willNeedDisambiguation: false,
     uploadStatus: 'initial',
     detectionStatus: 'initial',
     identityStatus: 'initial',
@@ -100,6 +158,9 @@ const initialImages: UploadImage[] = [
   {
     id: 'lobby',
     name: 'Lobby still.jpeg',
+    sceneIcon: 'diversity',
+    willFindFaces: true,
+    willNeedDisambiguation: true,
     uploadStatus: 'initial',
     detectionStatus: 'initial',
     identityStatus: 'initial',
@@ -196,8 +257,8 @@ const identityUploadMachine = setup({
               images: ({ context }) =>
                 context.images.map((image, index) => ({
                   ...image,
-                  uploadStatus: index === 1 ? 'error' : 'successFull',
-                  detectionStatus: index === 1 ? 'initial' : 'fetching',
+                  uploadStatus: index === 0 ? 'error' : 'successFull',
+                  detectionStatus: index === 0 ? 'initial' : 'fetching',
                   identityStatus: 'initial'
                 }))
             })
@@ -536,22 +597,6 @@ const identityUploadMachine = setup({
   }
 })
 
-const requestLabels: Record<RequestStatus, string> = {
-  initial: 'Initial',
-  fetching: 'Fetching',
-  successEmpty: 'Success - empty',
-  successFull: 'Success - full',
-  error: 'Error'
-}
-
-const requestColor: Record<RequestStatus, 'default' | 'primary' | 'success' | 'warning' | 'error'> = {
-  initial: 'default',
-  fetching: 'primary',
-  successEmpty: 'warning',
-  successFull: 'success',
-  error: 'error'
-}
-
 const stateNodes = [
   { id: 'idle', label: 'Initial' },
   { id: 'uploading', label: 'Upload images' },
@@ -624,6 +669,26 @@ function uploadsCompleteAfterRetry(images: UploadImage[], retriedImageId: string
 
 function shouldResolveDetection(image: UploadImage) {
   return image.uploadStatus === 'successFull' && image.detectionStatus === 'fetching'
+}
+
+function isCardRetrying(state: string, image: UploadImage, index: number) {
+  if (state === 'retryingUpload') {
+    return image.uploadStatus === 'fetching'
+  }
+
+  if (state === 'retryingDetections') {
+    return image.detectionStatus === 'error'
+  }
+
+  if (state === 'retryingCreateIdentity') {
+    return index === 0
+  }
+
+  if (state === 'retryingAddImagesToIdentity') {
+    return index > 0
+  }
+
+  return false
 }
 
 function nodeAnchor(nodeId: string, side: 'top' | 'right' | 'bottom' | 'left') {
@@ -731,23 +796,15 @@ function randomPostOutcome(): 'full' | 'error' {
   return Math.random() < 0.18 ? 'error' : 'full'
 }
 
-function randomFaceCount() {
-  const roll = Math.random()
-
-  if (roll < 0.16) {
-    return 0
+function createRandomFaces(image: UploadImage): Face[] {
+  if (!image.willFindFaces) {
+    return []
   }
 
-  if (roll < 0.7) {
-    return 1
-  }
+  const faceCount = image.willNeedDisambiguation ? (Math.random() < 0.78 ? 2 : 3) : 1
 
-  return Math.random() < 0.78 ? 2 : 3
-}
-
-function createRandomFaces(imageId: string): Face[] {
-  return Array.from({ length: randomFaceCount() }, (_, index) => ({
-    id: `${imageId}-face-${Date.now()}-${index}`,
+  return Array.from({ length: faceCount }, (_, index) => ({
+    id: `${image.id}-face-${Date.now()}-${index}`,
     label: `Face ${index + 1}`,
     confidence: 72 + Math.round(Math.random() * 25),
     box: {
@@ -759,33 +816,13 @@ function createRandomFaces(imageId: string): Face[] {
   }))
 }
 
-function createOneRandomFace(imageId: string): Face {
-  return {
-    id: `${imageId}-face-${Date.now()}-required`,
-    label: 'Face 1',
-    confidence: 72 + Math.round(Math.random() * 25),
-    box: {
-      x: 30 + Math.round(Math.random() * 18),
-      y: 18 + Math.round(Math.random() * 10),
-      width: 18 + Math.round(Math.random() * 8),
-      height: 26 + Math.round(Math.random() * 10)
-    }
-  }
-}
-
 function createFacesByImageId(images: UploadImage[], outcome: 'empty' | 'full' | 'error') {
   if (outcome === 'empty') {
     return Object.fromEntries(images.map(image => [image.id, []]))
   }
 
   const candidates = images.filter(shouldResolveDetection)
-  const facesByImageId = Object.fromEntries(candidates.map(image => [image.id, createRandomFaces(image.id)]))
-
-  if (outcome === 'full' && candidates.length > 0 && Object.values(facesByImageId).every(faces => faces.length === 0)) {
-    facesByImageId[candidates[0].id] = [createOneRandomFace(candidates[0].id)]
-  }
-
-  return facesByImageId
+  return Object.fromEntries(candidates.map(image => [image.id, createRandomFaces(image)]))
 }
 
 function randomDetectionErrorImageId(images: UploadImage[]) {
@@ -839,7 +876,7 @@ function IdentityUploadDemo() {
       }
 
       if (snapshot.matches('detecting')) {
-        const outcome = randomOutcome(0.1, 0.12)
+        const outcome = randomOutcome(0, 0.12)
         send({
           type: 'DETECTIONS_RESOLVED',
           errorImageId: outcome === 'error' ? randomDetectionErrorImageId(images) : undefined,
@@ -896,13 +933,6 @@ function IdentityUploadDemo() {
       <Card>
         <CardContent data-testid="identity-upload-demo">
           <Stack spacing={3}>
-            <StateMachineDiagram
-              canCreateIdentity={canCreateIdentity}
-              currentState={currentState}
-              hasUploadError={hasUploadError}
-              needsDisambiguation={needsDisambiguation}
-            />
-            <Divider />
             {snapshot.matches('disambiguating') && activeImage ? (
               <DisambiguationScreen
                 draftFaceId={draftFaceId}
@@ -913,7 +943,7 @@ function IdentityUploadDemo() {
               />
             ) : (
               <Grid container spacing={3}>
-                <Grid size={{ xs: 12, lg: 8 }}>
+                <Grid size={12}>
                   <Stack spacing={2}>
                     {isInitial ? (
                       <InitialUploadPanel onStartUpload={() => send({ type: 'START_UPLOAD' })} />
@@ -927,31 +957,32 @@ function IdentityUploadDemo() {
                           onStartUpload={() => send({ type: 'START_UPLOAD' })}
                           onReset={() => send({ type: 'RESET' })}
                         />
-                      <Grid container spacing={2}>
-                        {images.map((image, index) => (
-                          <Grid key={image.id} size={{ xs: 12, md: 4 }}>
-                            <ImageTile
-                              canRemove={currentState === 'reviewing' || image.uploadStatus === 'error'}
-                              identityLabel={index === 0 ? 'Create identity' : 'Add to identity'}
-                              image={image}
-                              onDisambiguate={() => send({ type: 'OPEN_DISAMBIGUATION', imageId: image.id })}
-                              onOmit={() => send({ type: 'OMIT_IMAGE', imageId: image.id })}
-                              onRetryUpload={() => send({ type: 'RETRY_UPLOAD', imageId: image.id })}
-                            />
-                          </Grid>
-                        ))}
-                      </Grid>
+                        <Grid container spacing={2}>
+                          {images.map((image, index) => (
+                            <Grid key={image.id} size={{ xs: 12, md: 4 }}>
+                              <ImageTile
+                                canRemove={currentState === 'reviewing' || image.uploadStatus === 'error'}
+                                forceProcessing={isCardRetrying(currentState, image, index)}
+                                image={image}
+                                onDisambiguate={() => send({ type: 'OPEN_DISAMBIGUATION', imageId: image.id })}
+                                onOmit={() => send({ type: 'OMIT_IMAGE', imageId: image.id })}
+                                onRetryUpload={() => send({ type: 'RETRY_UPLOAD', imageId: image.id })}
+                              />
+                            </Grid>
+                          ))}
+                        </Grid>
                       </>
                     )}
                   </Stack>
                 </Grid>
-                {!isInitial ? (
-                  <Grid size={{ xs: 12, lg: 4 }}>
-                    <SimulationPanel images={images} state={currentState} />
-                  </Grid>
-                ) : null}
               </Grid>
             )}
+            <StateMachineDiagram
+              canCreateIdentity={canCreateIdentity}
+              currentState={currentState}
+              hasUploadError={hasUploadError}
+              needsDisambiguation={needsDisambiguation}
+            />
           </Stack>
         </CardContent>
       </Card>
@@ -1059,77 +1090,23 @@ function Toolbar({
   )
 }
 
-type SimulationPanelProps = {
-  images: UploadImage[]
-  state: string
-}
-
-function SimulationPanel({ images, state }: SimulationPanelProps) {
-  const selectedFaceCount = images.filter(image => image.selectedFaceId).length
-  const multiFaceCount = images.filter(image => image.faces.length > 1 && !image.selectedFaceId).length
-  const errorCount = images.filter(
-    image => image.uploadStatus === 'error' || image.detectionStatus === 'error' || image.identityStatus === 'error'
-  ).length
-  const emptyDetectionCount = images.filter(image => image.detectionStatus === 'successEmpty').length
-  const isFetching =
-    state === 'uploading' ||
-    state === 'retryingUpload' ||
-    state === 'detecting' ||
-    state === 'retryingDetections' ||
-    state === 'creatingIdentity' ||
-    state === 'retryingCreateIdentity' ||
-    state === 'addingImagesToIdentity' ||
-    state === 'retryingAddImagesToIdentity'
-
-  return (
-    <Stack spacing={2}>
-      <Typography component="h3" variant="h3">
-        Local simulator
-      </Typography>
-      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2 }}>
-        <Stack spacing={1.5}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            {isFetching ? <HourglassEmptyIcon color="primary" /> : <CheckCircleIcon color="success" />}
-            <Typography variant="body2">
-              {isFetching ? 'Pretending to wait on a backend response' : 'No network requests are sent'}
-            </Typography>
-          </Stack>
-          {isFetching ? <LinearProgress /> : null}
-          <Typography color="text.secondary" variant="body2">
-            Each request resolves after artificial latency. Upload failures, detection counts, empty detections, create failures, and add-image failures are generated in memory.
-          </Typography>
-        </Stack>
-      </Box>
-      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2 }}>
-        <Stack spacing={1}>
-          <Typography sx={{ fontWeight: 700 }} variant="body2">
-            Current batch
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            {selectedFaceCount} selected, {multiFaceCount} ambiguous, {emptyDetectionCount} empty detections, {errorCount} errors.
-          </Typography>
-        </Stack>
-      </Box>
-    </Stack>
-  )
-}
-
 type ImageTileProps = {
   canRemove: boolean
-  identityLabel: string
+  forceProcessing: boolean
   image: UploadImage
   onDisambiguate: () => void
   onOmit: () => void
   onRetryUpload: () => void
 }
 
-function ImageTile({ canRemove, identityLabel, image, onDisambiguate, onOmit, onRetryUpload }: ImageTileProps) {
+function ImageTile({ canRemove, forceProcessing, image, onDisambiguate, onOmit, onRetryUpload }: ImageTileProps) {
   const hasMultipleFaces = image.faces.length > 1 && !image.selectedFaceId
   const hasNoFaces = image.detectionStatus === 'successEmpty'
   const hasUploadError = image.uploadStatus === 'error'
-  const hasPostUploadError = image.detectionStatus === 'error' || image.identityStatus === 'error'
+  const hasPostUploadError = !forceProcessing && (image.detectionStatus === 'error' || image.identityStatus === 'error')
   const hasRequestError = hasUploadError || hasPostUploadError
   const borderColor = hasRequestError ? 'error.main' : hasMultipleFaces ? 'warning.main' : hasNoFaces ? 'error.main' : 'divider'
+  const hasActions = hasMultipleFaces || hasUploadError
 
   return (
     <Box
@@ -1181,7 +1158,7 @@ function ImageTile({ canRemove, identityLabel, image, onDisambiguate, onOmit, on
         </Tooltip>
       ) : null}
       <ButtonBase
-        disabled={!hasMultipleFaces}
+        disabled={!hasMultipleFaces || forceProcessing}
         onClick={onDisambiguate}
         sx={{
           display: 'block',
@@ -1190,39 +1167,42 @@ function ImageTile({ canRemove, identityLabel, image, onDisambiguate, onOmit, on
           cursor: hasMultipleFaces ? 'pointer' : 'default'
         }}
       >
-        <Thumbnail image={image} />
+        <Thumbnail forceProcessing={forceProcessing} image={image} />
       </ButtonBase>
-      <Stack spacing={1.5} sx={{ p: 2 }}>
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography component="h3" sx={{ fontWeight: 700 }} variant="body2">
-            {image.name}
-          </Typography>
+      {hasActions ? (
+        <Stack spacing={1.5} sx={{ p: 2 }}>
+          {hasMultipleFaces ? (
+            <Button color="warning" onClick={onDisambiguate} size="small" startIcon={<ReportProblemIcon />} variant="outlined">
+              Choose face
+            </Button>
+          ) : null}
+          {hasUploadError ? (
+            <Button color="error" onClick={onRetryUpload} size="small" startIcon={<ReplayIcon />} variant="outlined">
+              Retry upload
+            </Button>
+          ) : null}
         </Stack>
-        <Stack spacing={1}>
-          <RequestChip label="Upload" status={image.uploadStatus} />
-          <RequestChip label="Detections" status={image.detectionStatus} />
-          <RequestChip label={identityLabel} status={image.identityStatus} />
-        </Stack>
-        {hasMultipleFaces ? (
-          <Button color="warning" onClick={onDisambiguate} size="small" startIcon={<ReportProblemIcon />} variant="outlined">
-            Choose face
-          </Button>
-        ) : null}
-        {hasUploadError ? (
-          <Button color="error" onClick={onRetryUpload} size="small" startIcon={<ReplayIcon />} variant="outlined">
-            Retry upload
-          </Button>
-        ) : null}
-      </Stack>
+      ) : null}
     </Box>
   )
 }
 
 type ThumbnailProps = {
+  forceProcessing: boolean
   image: UploadImage
 }
 
-function Thumbnail({ image }: ThumbnailProps) {
+function Thumbnail({ forceProcessing, image }: ThumbnailProps) {
+  const isProcessing =
+    forceProcessing ||
+    image.uploadStatus === 'fetching' ||
+    image.detectionStatus === 'fetching' ||
+    image.identityStatus === 'fetching'
+  const hasNoDetections = !isProcessing && image.detectionStatus === 'successEmpty'
+  const hasSelectedFace = !isProcessing && image.detectionStatus === 'successFull' && Boolean(image.selectedFaceId)
+  const SceneIcon = sceneIcons[image.sceneIcon]
+  const sceneColor = image.willNeedDisambiguation ? 'warning.main' : image.willFindFaces ? 'text.secondary' : 'text.secondary'
+
   return (
     <Box
       sx={theme => ({
@@ -1236,37 +1216,50 @@ function Thumbnail({ image }: ThumbnailProps) {
         overflow: 'hidden'
       })}
     >
-      <Box
-        sx={theme => ({
-          position: 'absolute',
-          inset: '16% 10%',
-          borderRadius: 1,
-          border: 1,
-          borderColor: alpha(theme.palette.text.primary, 0.18),
-          bgcolor: alpha(theme.palette.background.paper, 0.32)
-        })}
-      />
-      {image.detectionStatus === 'fetching' ? <LinearProgress sx={{ position: 'absolute', insetInline: 0, top: 0 }} /> : null}
-      {image.faces.map(face => (
+      {!hasSelectedFace ? (
+        <Box
+          sx={theme => ({
+            position: 'absolute',
+            inset: '16% 10%',
+            borderRadius: 1,
+            border: 1,
+            borderColor: alpha(theme.palette.text.primary, 0.18),
+            bgcolor: alpha(theme.palette.background.paper, 0.32)
+          })}
+        />
+      ) : null}
+      {isProcessing ? <LinearProgress sx={{ position: 'absolute', insetInline: 0, top: 0 }} /> : null}
+      {!hasNoDetections && !hasSelectedFace && image.uploadStatus !== 'error' ? (
         <Box
           aria-hidden="true"
-          key={face.id}
           sx={{
             position: 'absolute',
-            left: `${face.box.x}%`,
-            top: `${face.box.y}%`,
-            width: `${face.box.width}%`,
-            height: `${face.box.height}%`,
-            border: 2,
-            borderColor: image.selectedFaceId === face.id ? 'success.main' : 'warning.main',
-            borderRadius: 1,
-            boxShadow: 2
+            inset: 0,
+            display: 'grid',
+            placeItems: 'center',
+            color: sceneColor
           }}
-        />
-      ))}
-      {image.uploadStatus === 'initial' ? <CenteredStatus icon={<AddPhotoAlternateIcon />} label="Ready" /> : null}
-      {image.uploadStatus === 'fetching' ? <CenteredStatus icon={<HourglassEmptyIcon />} label="Uploading" /> : null}
-      {image.uploadStatus === 'error' ? <CenteredStatus icon={<ErrorOutlineIcon />} label="Upload failed" /> : null}
+        >
+          <SceneIcon sx={{ fontSize: { xs: 104, md: 132 }, opacity: isProcessing ? 0.34 : 0.78 }} />
+        </Box>
+      ) : null}
+      {hasSelectedFace ? (
+        <Box
+          aria-hidden="true"
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'grid',
+            placeItems: 'center',
+            color: 'success.main'
+          }}
+        >
+          <PersonIcon sx={{ fontSize: { xs: 132, md: 168 }, opacity: 0.9 }} />
+        </Box>
+      ) : null}
+      {isProcessing ? <CenteredStatus icon={<HourglassEmptyIcon />} label="Processing" /> : null}
+      {image.uploadStatus === 'error' && !isProcessing ? <CenteredStatus icon={<ErrorOutlineIcon />} label="Upload failed" /> : null}
+      {hasNoDetections ? <CenteredStatus icon={<ErrorOutlineIcon />} label="No detections found" tone="error" /> : null}
     </Box>
   )
 }
@@ -1274,9 +1267,10 @@ function Thumbnail({ image }: ThumbnailProps) {
 type CenteredStatusProps = {
   icon: ReactNode
   label: string
+  tone?: 'default' | 'error'
 }
 
-function CenteredStatus({ icon, label }: CenteredStatusProps) {
+function CenteredStatus({ icon, label, tone = 'default' }: CenteredStatusProps) {
   return (
     <Stack
       spacing={0.5}
@@ -1285,30 +1279,14 @@ function CenteredStatus({ icon, label }: CenteredStatusProps) {
         inset: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        color: 'text.secondary'
+        color: tone === 'error' ? 'error.main' : 'text.secondary'
       }}
     >
       {icon}
-      <Typography variant="body2">{label}</Typography>
+      <Typography sx={{ fontWeight: tone === 'error' ? 700 : 500 }} variant="body2">
+        {label}
+      </Typography>
     </Stack>
-  )
-}
-
-type RequestChipProps = {
-  label: string
-  status: RequestStatus
-}
-
-function RequestChip({ label, status }: RequestChipProps) {
-  return (
-    <Chip
-      color={requestColor[status]}
-      icon={status === 'error' ? <ErrorOutlineIcon /> : status === 'fetching' ? <HourglassEmptyIcon /> : undefined}
-      label={`${label}: ${requestLabels[status]}`}
-      size="small"
-      sx={{ justifyContent: 'flex-start' }}
-      variant={status === 'initial' ? 'outlined' : 'filled'}
-    />
   )
 }
 
@@ -1329,7 +1307,7 @@ function DisambiguationScreen({ draftFaceId, image, onBack, onConfirm, onSelectF
             Select the correct face
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            {image.name} returned multiple detections, so the machine pauses before identity creation.
+            Multiple detections were found, so the machine pauses before identity creation.
           </Typography>
         </Stack>
         <Button onClick={onBack} startIcon={<ArrowBackIcon />}>
@@ -1338,7 +1316,7 @@ function DisambiguationScreen({ draftFaceId, image, onBack, onConfirm, onSelectF
       </Stack>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 7 }}>
-          <Thumbnail image={{ ...image, selectedFaceId: draftFaceId }} />
+          <Thumbnail forceProcessing={false} image={{ ...image, selectedFaceId: draftFaceId }} />
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
           <Stack spacing={1.5}>
