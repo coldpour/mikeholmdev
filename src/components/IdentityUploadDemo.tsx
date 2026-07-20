@@ -10,7 +10,6 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutlineOutlined'
 import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural'
 import GroupsIcon from '@mui/icons-material/Groups'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
-import PersonSearchIcon from '@mui/icons-material/PersonSearch'
 import ReplayIcon from '@mui/icons-material/Replay'
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import Box from '@mui/material/Box'
@@ -67,8 +66,8 @@ type MachineEvent =
   | { type: 'UPLOAD_RESOLVED'; outcome: 'full' | 'error' }
   | { type: 'RETRY_UPLOAD'; imageId: string }
   | { type: 'UPLOAD_RETRY_RESOLVED'; imageId: string; outcome: 'full' | 'error' }
-  | { type: 'START_DETECTIONS' }
-  | { type: 'DETECTIONS_RESOLVED'; outcome: 'empty' | 'full' | 'error'; facesByImageId: Record<string, Face[]> }
+  | { type: 'DETECTIONS_RESOLVED'; errorImageId?: string; outcome: 'empty' | 'full' | 'error'; facesByImageId: Record<string, Face[]> }
+  | { type: 'RETRY_DETECTIONS' }
   | { type: 'OPEN_DISAMBIGUATION'; imageId: string }
   | { type: 'SELECT_FACE'; faceId: string }
   | { type: 'CONFIRM_FACE' }
@@ -286,30 +285,29 @@ const identityUploadMachine = setup({
             target: 'reviewing',
             actions: assign({
               images: ({ context }) =>
-                context.images.map(image => ({
-                  ...image,
-                  detectionStatus: image.uploadStatus === 'successFull' ? 'successEmpty' : 'initial',
-                  faces: [],
-                  selectedFaceId: undefined
-                }))
+                context.images.map(image =>
+                  shouldResolveDetection(image)
+                    ? {
+                        ...image,
+                        detectionStatus: 'successEmpty',
+                        faces: [],
+                        selectedFaceId: undefined
+                      }
+                    : image
+                )
             })
           },
           {
             guard: ({ event }) => event.outcome === 'error',
-            target: 'reviewing',
+            target: 'retryingDetections',
             actions: assign({
               images: ({ context, event }) =>
-                context.images.map((image, index) => {
-                  if (image.uploadStatus !== 'successFull') {
-                    return {
-                      ...image,
-                      detectionStatus: 'initial',
-                      faces: [],
-                      selectedFaceId: undefined
-                    }
+                context.images.map(image => {
+                  if (!shouldResolveDetection(image)) {
+                    return image
                   }
 
-                  if (index === 2) {
+                  if (image.id === event.errorImageId) {
                     return {
                       ...image,
                       detectionStatus: 'error',
@@ -334,16 +332,15 @@ const identityUploadMachine = setup({
             actions: assign({
               images: ({ context, event }) =>
                 context.images.map(image => {
+                  if (!shouldResolveDetection(image)) {
+                    return image
+                  }
+
                   const faces = event.facesByImageId[image.id] ?? []
 
                   return {
                     ...image,
-                    detectionStatus:
-                      image.uploadStatus === 'successFull'
-                        ? faces.length > 0
-                          ? 'successFull'
-                          : 'successEmpty'
-                        : 'initial',
+                    detectionStatus: faces.length > 0 ? 'successFull' : 'successEmpty',
                     faces,
                     selectedFaceId: faces.length === 1 ? faces[0].id : undefined
                   }
@@ -353,21 +350,28 @@ const identityUploadMachine = setup({
         ]
       }
     },
-    reviewing: {
+    retryingDetections: {
       on: {
-        START_DETECTIONS: {
+        RETRY_DETECTIONS: {
           target: 'detecting',
           actions: assign({
             images: ({ context }) =>
-              context.images.map(image => ({
-                ...image,
-                detectionStatus: image.uploadStatus === 'successFull' ? 'fetching' : image.detectionStatus,
-                identityStatus: 'initial',
-                faces: [],
-                selectedFaceId: undefined
-              }))
+              context.images.map(image =>
+                image.detectionStatus === 'error'
+                  ? {
+                      ...image,
+                      detectionStatus: 'fetching',
+                      faces: [],
+                      selectedFaceId: undefined
+                    }
+                  : image
+              )
           })
-        },
+        }
+      }
+    },
+    reviewing: {
+      on: {
         OPEN_DISAMBIGUATION: {
           target: 'disambiguating',
           actions: assign({
@@ -552,6 +556,7 @@ const stateNodes = [
   { id: 'uploadProblem', label: 'Upload problem' },
   { id: 'retryingUpload', label: 'Retry upload' },
   { id: 'detecting', label: 'Detect faces' },
+  { id: 'retryingDetections', label: 'Auto retry detections' },
   { id: 'reviewing', label: 'Review selections' },
   { id: 'disambiguating', label: 'Disambiguate' },
   { id: 'creatingIdentity', label: 'Create identity' },
@@ -572,6 +577,10 @@ function readyForIdentity(images: UploadImage[]) {
 
 function uploadsCompleteAfterRetry(images: UploadImage[], retriedImageId: string) {
   return images.every(image => image.id === retriedImageId || image.uploadStatus === 'successFull')
+}
+
+function shouldResolveDetection(image: UploadImage) {
+  return image.uploadStatus === 'successFull' && image.detectionStatus === 'fetching'
 }
 
 function randomLatency() {
@@ -647,7 +656,7 @@ function createFacesByImageId(images: UploadImage[], outcome: 'empty' | 'full' |
     return Object.fromEntries(images.map(image => [image.id, []]))
   }
 
-  const candidates = images.filter(image => image.uploadStatus === 'successFull')
+  const candidates = images.filter(shouldResolveDetection)
   const facesByImageId = Object.fromEntries(candidates.map(image => [image.id, createRandomFaces(image.id)]))
 
   if (outcome === 'full' && candidates.length > 0 && Object.values(facesByImageId).every(faces => faces.length === 0)) {
@@ -655,6 +664,12 @@ function createFacesByImageId(images: UploadImage[], outcome: 'empty' | 'full' |
   }
 
   return facesByImageId
+}
+
+function randomDetectionErrorImageId(images: UploadImage[]) {
+  const candidates = images.filter(shouldResolveDetection)
+
+  return candidates[Math.floor(Math.random() * candidates.length)]?.id
 }
 
 function randomIdentityId() {
@@ -666,7 +681,6 @@ function IdentityUploadDemo() {
   const { images, activeImageId, draftFaceId, identityId } = snapshot.context
   const activeImage = images.find(image => image.id === activeImageId)
   const canCreateIdentity = readyForIdentity(images)
-  const hasDetectionError = images.some(image => image.detectionStatus === 'error')
   const currentState = String(snapshot.value)
   const isInitial = snapshot.matches('idle')
 
@@ -675,6 +689,7 @@ function IdentityUploadDemo() {
       !snapshot.matches('uploading') &&
       !snapshot.matches('retryingUpload') &&
       !snapshot.matches('detecting') &&
+      !snapshot.matches('retryingDetections') &&
       !snapshot.matches('creatingIdentity') &&
       !snapshot.matches('retryingCreateIdentity') &&
       !snapshot.matches('addingImagesToIdentity') &&
@@ -703,9 +718,15 @@ function IdentityUploadDemo() {
         const outcome = randomOutcome(0.1, 0.12)
         send({
           type: 'DETECTIONS_RESOLVED',
+          errorImageId: outcome === 'error' ? randomDetectionErrorImageId(images) : undefined,
           outcome,
           facesByImageId: createFacesByImageId(images, outcome)
         })
+        return
+      }
+
+      if (snapshot.matches('retryingDetections')) {
+        send({ type: 'RETRY_DETECTIONS' })
         return
       }
 
@@ -771,11 +792,9 @@ function IdentityUploadDemo() {
                       <>
                         <Toolbar
                           canCreateIdentity={canCreateIdentity}
-                          hasDetectionError={hasDetectionError}
                           identityId={identityId}
                           state={currentState}
                           onCreateIdentity={() => send({ type: 'CREATE_IDENTITY' })}
-                          onStartDetections={() => send({ type: 'START_DETECTIONS' })}
                           onStartUpload={() => send({ type: 'START_UPLOAD' })}
                           onReset={() => send({ type: 'RESET' })}
                         />
@@ -813,12 +832,10 @@ function IdentityUploadDemo() {
 
 type ToolbarProps = {
   canCreateIdentity: boolean
-  hasDetectionError: boolean
   identityId?: string
   state: string
   onCreateIdentity: () => void
   onReset: () => void
-  onStartDetections: () => void
   onStartUpload: () => void
 }
 
@@ -850,18 +867,17 @@ function InitialUploadPanel({ onStartUpload }: InitialUploadPanelProps) {
 
 function Toolbar({
   canCreateIdentity,
-  hasDetectionError,
   identityId,
   state,
   onCreateIdentity,
   onReset,
-  onStartDetections,
   onStartUpload
 }: ToolbarProps) {
   const requestInFlight =
     state === 'uploading' ||
     state === 'retryingUpload' ||
     state === 'detecting' ||
+    state === 'retryingDetections' ||
     state === 'creatingIdentity' ||
     state === 'retryingCreateIdentity' ||
     state === 'addingImagesToIdentity' ||
@@ -886,17 +902,6 @@ function Toolbar({
             variant="contained"
           >
             Simulate upload
-          </Button>
-        ) : null}
-        {hasDetectionError ? (
-          <Button
-            disabled={requestInFlight || state !== 'reviewing'}
-            data-testid="start-detections"
-            onClick={onStartDetections}
-            startIcon={<PersonSearchIcon />}
-            variant="outlined"
-          >
-            Retry detections
           </Button>
         ) : null}
         {canShowCreateIdentity ? (
@@ -941,6 +946,7 @@ function SimulationPanel({ images, state }: SimulationPanelProps) {
     state === 'uploading' ||
     state === 'retryingUpload' ||
     state === 'detecting' ||
+    state === 'retryingDetections' ||
     state === 'creatingIdentity' ||
     state === 'retryingCreateIdentity' ||
     state === 'addingImagesToIdentity' ||
