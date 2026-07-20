@@ -83,6 +83,7 @@ type SceneIconName =
   | 'elderly'
   | 'elderlyWoman'
   | 'forest'
+  | 'groups'
   | 'park'
   | 'sportsKabaddi'
   | 'whatshot'
@@ -100,11 +101,51 @@ const sceneIcons = {
   elderly: ElderlyIcon,
   elderlyWoman: ElderlyWomanIcon,
   forest: ForestIcon,
+  groups: GroupsIcon,
   park: ParkIcon,
   sportsKabaddi: SportsKabaddiIcon,
   whatshot: WhatshotIcon,
   wc: WcIcon
 }
+
+type DetectionStory = 'autoSelectable' | 'needsDisambiguation' | 'noDetections'
+
+const singlePersonSceneIcons: SceneIconName[] = [
+  'directionsRun',
+  'directionsWalk',
+  'elderly',
+  'elderlyWoman',
+  'accessibility',
+  'accessible'
+]
+
+const disambiguationSceneIcons: SceneIconName[] = ['diversity', 'groups', 'sportsKabaddi', 'wc']
+
+const noDetectionSceneIcons: SceneIconName[] = [
+  'airlineSeatLegroomExtra',
+  'forest',
+  'park',
+  'whatshot',
+  'directionsCar',
+  'construction'
+]
+
+const imageShells = [
+  { id: 'portrait', name: 'Badge portrait.jpg' },
+  { id: 'platform', name: 'Transit platform.png' },
+  { id: 'lobby', name: 'Lobby still.jpeg' }
+]
+
+const detectionScenarios: DetectionStory[][] = [
+  ['noDetections', 'noDetections', 'noDetections'],
+  ['needsDisambiguation', 'needsDisambiguation', 'needsDisambiguation'],
+  ['autoSelectable', 'autoSelectable', 'autoSelectable'],
+  ['autoSelectable', 'noDetections', 'needsDisambiguation'],
+  ['noDetections', 'autoSelectable', 'needsDisambiguation'],
+  ['needsDisambiguation', 'noDetections', 'autoSelectable'],
+  ['noDetections', 'autoSelectable', 'autoSelectable'],
+  ['needsDisambiguation', 'autoSelectable', 'needsDisambiguation']
+]
 
 type MachineContext = {
   images: UploadImage[]
@@ -132,43 +173,40 @@ type MachineEvent =
   | { type: 'RETRY_ADD_IMAGES' }
   | { type: 'RESET' }
 
-const initialImages: UploadImage[] = [
-  {
-    id: 'portrait',
-    name: 'Badge portrait.jpg',
-    sceneIcon: 'directionsWalk',
-    willFindFaces: true,
-    willNeedDisambiguation: false,
-    uploadStatus: 'initial',
-    detectionStatus: 'initial',
-    identityStatus: 'initial',
-    faces: []
-  },
-  {
-    id: 'platform',
-    name: 'Transit platform.png',
-    sceneIcon: 'directionsCar',
-    willFindFaces: false,
-    willNeedDisambiguation: false,
-    uploadStatus: 'initial',
-    detectionStatus: 'initial',
-    identityStatus: 'initial',
-    faces: []
-  },
-  {
-    id: 'lobby',
-    name: 'Lobby still.jpeg',
-    sceneIcon: 'diversity',
-    willFindFaces: true,
-    willNeedDisambiguation: true,
-    uploadStatus: 'initial',
-    detectionStatus: 'initial',
-    identityStatus: 'initial',
-    faces: []
-  }
-]
+function randomItem<T>(items: T[]) {
+  return items[Math.floor(Math.random() * items.length)] as T
+}
 
-const cloneInitialImages = () => initialImages.map(image => ({ ...image, faces: [] }))
+function sceneIconForStory(story: DetectionStory) {
+  if (story === 'noDetections') {
+    return randomItem(noDetectionSceneIcons)
+  }
+
+  if (story === 'needsDisambiguation') {
+    return randomItem(disambiguationSceneIcons)
+  }
+
+  return randomItem(singlePersonSceneIcons)
+}
+
+function createInitialImages() {
+  const scenario = randomItem(detectionScenarios)
+
+  return imageShells.map((image, index) => {
+    const story = scenario[index] ?? 'autoSelectable'
+
+    return {
+      ...image,
+      sceneIcon: sceneIconForStory(story),
+      willFindFaces: story !== 'noDetections',
+      willNeedDisambiguation: story === 'needsDisambiguation',
+      uploadStatus: 'initial' as const,
+      detectionStatus: 'initial' as const,
+      identityStatus: 'initial' as const,
+      faces: []
+    }
+  })
+}
 
 const identityUploadMachine = setup({
   types: {} as {
@@ -179,7 +217,7 @@ const identityUploadMachine = setup({
   id: 'identityImageUpload',
   initial: 'idle',
   context: {
-    images: cloneInitialImages()
+    images: createInitialImages()
   },
   on: {
     RETRY_UPLOAD: {
@@ -220,7 +258,7 @@ const identityUploadMachine = setup({
     RESET: {
       target: '.idle',
       actions: assign({
-        images: () => cloneInitialImages(),
+        images: () => createInitialImages(),
         activeImageId: () => undefined,
         draftFaceId: () => undefined,
         identityId: () => undefined
@@ -1199,7 +1237,7 @@ function Thumbnail({ forceProcessing, image }: ThumbnailProps) {
     image.detectionStatus === 'fetching' ||
     image.identityStatus === 'fetching'
   const hasNoDetections = !isProcessing && image.detectionStatus === 'successEmpty'
-  const hasSelectedFace = !isProcessing && image.detectionStatus === 'successFull' && Boolean(image.selectedFaceId)
+  const hasSelectedFace = image.detectionStatus === 'successFull' && Boolean(image.selectedFaceId)
   const SceneIcon = sceneIcons[image.sceneIcon]
   const sceneColor = image.willNeedDisambiguation ? 'warning.main' : image.willFindFaces ? 'text.secondary' : 'text.secondary'
 
