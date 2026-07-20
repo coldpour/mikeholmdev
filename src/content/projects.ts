@@ -4,7 +4,7 @@ export type Project = CaseStudyContent & {
   homepageGroup: 'featured' | 'percipient' | 'background'
   company: string
   cardTitle: string
-  visual?: 'connect-four-board' | 'map-after' | 'triangles'
+  visual?: 'connect-four-board' | 'identity-upload' | 'map-after' | 'triangles'
   links?: Array<{
     href: string
     label: string
@@ -154,6 +154,7 @@ export const projects: Project[] = [
     eyebrow: 'Percipient deep dive',
     title: 'Bulk image upload for identity creation',
     role: 'Principal UI Engineer, Tech Lead, product workflow and resilient async UX',
+    visual: 'identity-upload',
     summary:
       'Designed a resilient folder-upload workflow that handled ambiguous face detection while keeping analysts in control.',
     body: [

@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CaseStudy } from '@/components/CaseStudy'
 import { ConnectFourBoard } from '@/components/ConnectFourBoard'
+import { IdentityUploadDemo } from '@/components/IdentityUploadDemo'
 import { MapAfter } from '@/components/MapAfter'
 import { SiteShell } from '@/components/SiteShell'
 import { withBasePath } from '@/app/paths'
@@ -72,6 +73,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           />
         ) : null}
         {project.visual === 'connect-four-board' ? <ConnectFourBoard /> : null}
+        {project.visual === 'identity-upload' ? <IdentityUploadDemo /> : null}
         {project.links?.length ? (
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             {project.links.map(link => (
