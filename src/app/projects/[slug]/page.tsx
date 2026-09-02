@@ -8,6 +8,7 @@ import { CaseStudy } from '@/components/CaseStudy'
 import { ConnectFourBoard } from '@/components/ConnectFourBoard'
 import { IdentityUploadDemo } from '@/components/IdentityUploadDemo'
 import { MapAfter } from '@/components/MapAfter'
+import { PRReviewGuide } from '@/components/PRReviewGuide'
 import { SiteShell } from '@/components/SiteShell'
 import { withBasePath } from '@/app/paths'
 import { projectBySlug, projects } from '@/content/projects'
@@ -51,9 +52,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <Button href={withBasePath('/')} sx={{ mb: 3 }}>
             Back to projects
           </Button>
-          <CaseStudy project={project}>
-            {project.visual === 'map-after' ? <MapAfter /> : null}
-          </CaseStudy>
+          {project.page === 'pr-review-guide' ? (
+            <PRReviewGuide />
+          ) : (
+            <CaseStudy project={project}>
+              {project.visual === 'map-after' ? <MapAfter /> : null}
+            </CaseStudy>
+          )}
         </Box>
         {project.visual === 'triangles' ? (
           <Box
