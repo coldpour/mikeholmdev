@@ -4,6 +4,7 @@ export type Project = CaseStudyContent & {
   homepageGroup: 'featured' | 'percipient' | 'background'
   company: string
   cardTitle: string
+  page?: 'pr-review-guide'
   visual?: 'connect-four-board' | 'identity-upload' | 'map-after' | 'triangles'
   links?: Array<{
     href: string
@@ -12,6 +13,19 @@ export type Project = CaseStudyContent & {
 }
 
 export const projects: Project[] = [
+  {
+    slug: 'pr-review-at-speed',
+    homepageGroup: 'featured',
+    company: 'Team engineering',
+    cardTitle: 'Turned pull requests into a resilience practice',
+    eyebrow: 'Team engineering playbook',
+    title: 'Pull requests that make fast teams stronger',
+    page: 'pr-review-guide',
+    role: 'Review philosophy, change-request craft, PR sizing, and agent collaboration',
+    summary:
+      'A practical philosophy for preserving judgment, authoring reviewable changes, and helping teams move quickly without becoming fragile.',
+    body: []
+  },
   {
     slug: 'mikeholmmusic',
     homepageGroup: 'featured',
