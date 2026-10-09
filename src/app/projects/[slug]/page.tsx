@@ -52,6 +52,24 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <Button href={withBasePath('/')} sx={{ mb: 3 }}>
             Back to projects
           </Button>
+          {project.slug === 'mikeholmmusic' ? (
+            <Box
+              component="iframe"
+              src="https://mikeholmmusic.com"
+              title="Mike Holm Music website"
+              sx={{
+                display: 'block',
+                width: '100%',
+                height: { xs: '70vh', md: '80vh' },
+                minHeight: { xs: 480, md: 640 },
+                mb: { xs: 4, md: 5 },
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 2,
+                backgroundColor: 'background.paper'
+              }}
+            />
+          ) : null}
           {project.page === 'pr-review-guide' ? (
             <PRReviewGuide />
           ) : (
