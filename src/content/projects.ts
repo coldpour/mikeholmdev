@@ -14,6 +14,18 @@ export type Project = CaseStudyContent & {
 
 export const projects: Project[] = [
   {
+    slug: 'homebot-design-system',
+    homepageGroup: 'featured',
+    company: 'Homebot',
+    cardTitle: 'Turned a stylesheet into shared product infrastructure',
+    eyebrow: 'Design system deep dive',
+    title: 'Building Homebot’s design system',
+    role: 'Frontend Developer, system builder and team lead, 2018–2020',
+    summary:
+      'Built and led a custom, white-label component system after aligning design and engineering leadership on the cost and value of the investment.',
+    body: []
+  },
+  {
     slug: 'pr-review-at-speed',
     homepageGroup: 'featured',
     company: 'Team engineering',

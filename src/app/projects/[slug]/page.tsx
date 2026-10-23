@@ -20,7 +20,9 @@ type ProjectPageProps = {
 }
 
 export function generateStaticParams() {
-  return projects.map(project => ({ slug: project.slug }))
+  return projects
+    .filter(project => project.slug !== 'homebot-design-system')
+    .map(project => ({ slug: project.slug }))
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
