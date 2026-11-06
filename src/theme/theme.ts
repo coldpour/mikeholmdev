@@ -1,5 +1,14 @@
 import { createTheme } from '@mui/material/styles'
 
+declare module '@mui/material/styles' {
+  interface PaletteColor {
+    subtle?: string
+  }
+  interface SimplePaletteColorOptions {
+    subtle?: string
+  }
+}
+
 export const theme = createTheme({
   cssVariables: {
     colorSchemeSelector: 'data'
@@ -8,10 +17,15 @@ export const theme = createTheme({
     light: {
       palette: {
         primary: {
-          main: '#0f5e68'
+          main: '#0f5e68',
+          subtle: '#e1f1f3'
         },
         secondary: {
           main: '#8c4b2f'
+        },
+        warning: {
+          main: '#956400',
+          subtle: '#fff4ce'
         },
         background: {
           default: '#f7f5ef',
@@ -27,10 +41,15 @@ export const theme = createTheme({
     dark: {
       palette: {
         primary: {
-          main: '#7ccbd4'
+          main: '#7ccbd4',
+          subtle: '#193b42'
         },
         secondary: {
           main: '#d69a78'
+        },
+        warning: {
+          main: '#f1c75b',
+          subtle: '#3d3217'
         },
         background: {
           default: '#101418',

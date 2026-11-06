@@ -14,6 +14,18 @@ export type Project = CaseStudyContent & {
 
 export const projects: Project[] = [
   {
+    slug: 'reporting-filters',
+    homepageGroup: 'featured',
+    company: 'Interaction design',
+    cardTitle: 'Made complex filters feel clear, stable and fast',
+    eyebrow: 'Desktop reporting workflows',
+    title: 'Filters that stay out of the way',
+    role: 'Interaction design, frontend engineering and type-safe state modeling',
+    summary:
+      'How I rebuilt a filter form so users could find records, build reports and keep their work when they came back.',
+    body: []
+  },
+  {
     slug: 'homebot-design-system',
     homepageGroup: 'featured',
     company: 'Homebot',
