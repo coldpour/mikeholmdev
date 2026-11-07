@@ -21,7 +21,7 @@ type ProjectPageProps = {
 
 export function generateStaticParams() {
   return projects
-    .filter(project => !['homebot-design-system', 'reporting-filters'].includes(project.slug))
+    .filter(project => !['homebot-design-system', 'reporting-filters', 'mobile-shopping-filters'].includes(project.slug))
     .map(project => ({ slug: project.slug }))
 }
 

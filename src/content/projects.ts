@@ -14,6 +14,18 @@ export type Project = CaseStudyContent & {
 
 export const projects: Project[] = [
   {
+    slug: 'mobile-shopping-filters',
+    homepageGroup: 'featured',
+    company: 'Interaction design',
+    cardTitle: 'Kept mobile shopping filters close to the decision',
+    eyebrow: 'Mobile shopping workflows',
+    title: 'Making mobile shopping awesome',
+    role: 'Mobile interaction design and frontend engineering',
+    summary:
+      'A working mobile store, rebuilt so shoppers can refine as they browse, compare useful choices and know when they’ve seen every match.',
+    body: []
+  },
+  {
     slug: 'reporting-filters',
     homepageGroup: 'featured',
     company: 'Interaction design',

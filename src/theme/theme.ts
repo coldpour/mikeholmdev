@@ -1,6 +1,20 @@
 import { createTheme } from '@mui/material/styles'
 
+const bootColors = {
+  brown: '#8c4b2f',
+  black: '#242b2f',
+  green: '#3c5746',
+  detail: '#fffdf8',
+  sole: '#1f2933'
+}
+
 declare module '@mui/material/styles' {
+  interface Palette {
+    boot: typeof bootColors
+  }
+  interface PaletteOptions {
+    boot?: typeof bootColors
+  }
   interface PaletteColor {
     subtle?: string
   }
@@ -16,6 +30,7 @@ export const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
+        boot: bootColors,
         primary: {
           main: '#0f5e68',
           subtle: '#e1f1f3'
@@ -40,6 +55,7 @@ export const theme = createTheme({
     },
     dark: {
       palette: {
+        boot: bootColors,
         primary: {
           main: '#7ccbd4',
           subtle: '#193b42'
